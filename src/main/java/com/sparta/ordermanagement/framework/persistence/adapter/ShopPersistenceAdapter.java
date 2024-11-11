@@ -25,6 +25,12 @@ public class ShopPersistenceAdapter implements ShopOutputPort {
             .or(Optional::empty);
     }
 
+    public Optional<Shop> findByShopUuid(String shopUuid) {
+        return shopRepository.findByShopUuid(shopUuid)
+            .map(ShopEntity::toDomain)
+            .or(Optional::empty);
+    }
+
     public Optional<Shop> findByIdWithCategory(String shopId) {
         return shopRepository.findByIdWithCategory(shopId)
             .map(ShopEntity::toDomain)
