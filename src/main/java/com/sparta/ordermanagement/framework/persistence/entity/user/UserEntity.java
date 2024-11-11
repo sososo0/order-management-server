@@ -14,8 +14,11 @@ import lombok.NoArgsConstructor;
 public class UserEntity extends BaseEntity {
 
     @Id
-    @Column(name ="user_id")
-    private String id;
+    @Column(name ="id")
+    private Long id;
+
+    @Column(nullable = false, columnDefinition = "varchar(255)")
+    private String userId;
 
     @Column(nullable = false, columnDefinition = "varchar(255)")
     private String password;
