@@ -12,6 +12,7 @@ public class Product {
     private String productDescription;
     private ProductState productState;
     private Shop shop;
+    private boolean isDeleted;
 
     public Product(
         Long id,
@@ -20,7 +21,8 @@ public class Product {
         Integer productPrice,
         String productDescription,
         ProductState productState,
-        Shop shop
+        Shop shop,
+        boolean isDeleted
     ) {
         this.id = id;
         this.productUuid = productUuid;
@@ -29,6 +31,7 @@ public class Product {
         this.productDescription = productDescription;
         this.productState = productState;
         this.shop = shop;
+        this.isDeleted = isDeleted;
     }
 
     public boolean isSameShop(String shopUuid) {
@@ -61,5 +64,9 @@ public class Product {
 
     public Shop getShop() {
         return shop;
+    }
+
+    public boolean getIsDeleted() {
+        return isDeleted;
     }
 }

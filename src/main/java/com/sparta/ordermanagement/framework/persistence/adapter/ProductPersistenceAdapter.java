@@ -2,9 +2,8 @@ package com.sparta.ordermanagement.framework.persistence.adapter;
 
 import com.sparta.ordermanagement.application.domain.product.Product;
 import com.sparta.ordermanagement.application.domain.product.ProductForCreate;
+import com.sparta.ordermanagement.application.domain.product.ProductForDelete;
 import com.sparta.ordermanagement.application.domain.product.ProductStateForUpdate;
-import com.sparta.ordermanagement.application.domain.shop.Shop;
-import com.sparta.ordermanagement.application.exception.product.ProductNotBelongToShopException;
 import com.sparta.ordermanagement.application.exception.product.ProductUuidInvalidException;
 import com.sparta.ordermanagement.application.exception.shop.ShopUuidInvalidException;
 import com.sparta.ordermanagement.application.output.ProductOutputPort;
@@ -43,11 +42,24 @@ public class ProductPersistenceAdapter implements ProductOutputPort {
     @Override
     public Product updateProductState(ProductStateForUpdate productStateForUpdate) {
 
-        ProductEntity productEntity = productRepository.findByProductUuid(productStateForUpdate.productUuid())
-            .orElseThrow(() -> new ProductUuidInvalidException(productStateForUpdate.productUuid()));
-
+        ProductEntity productEntity = getProductByUuid(productStateForUpdate.productUuid());
         productEntity.updateProductState(productStateForUpdate);
 
         return productEntity.toDomain();
+    }
+
+    @Transactional
+    @Override
+    public Product deleteProduct(ProductForDelete productForDelete) {
+
+        ProductEntity productEntity = getProductByUuid(productForDelete.productUuid());
+        productEntity.deleteProduct(productForDelete);
+
+        return productEntity.toDomain();
+    }
+
+    private ProductEntity getProductByUuid(String productUuid) {
+        return productRepository.findByProductUuid(productUuid)
+            .orElseThrow(() -> new ProductUuidInvalidException(productUuid));
     }
 }

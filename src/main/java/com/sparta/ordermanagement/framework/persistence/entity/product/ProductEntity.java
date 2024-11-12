@@ -2,6 +2,7 @@ package com.sparta.ordermanagement.framework.persistence.entity.product;
 
 import com.sparta.ordermanagement.application.domain.product.Product;
 import com.sparta.ordermanagement.application.domain.product.ProductForCreate;
+import com.sparta.ordermanagement.application.domain.product.ProductForDelete;
 import com.sparta.ordermanagement.application.domain.product.ProductStateForUpdate;
 import com.sparta.ordermanagement.framework.persistence.entity.BaseEntity;
 import com.sparta.ordermanagement.framework.persistence.entity.shop.ShopEntity;
@@ -86,12 +87,18 @@ public class ProductEntity extends BaseEntity {
             productPrice,
             productDescription,
             productState,
-            shopEntity.toDomain()
+            shopEntity.toDomain(),
+            super.isDeleted()
         );
     }
 
     public void updateProductState(ProductStateForUpdate productStateForUpdate) {
         productState = productStateForUpdate.productState();
         super.updateFrom(productStateForUpdate.userUuid());
+    }
+
+    public void deleteProduct(ProductForDelete productForDelete) {
+        super.delete(productForDelete.deleteRequest());
+        super.deleteFrom(productForDelete.userUuid());
     }
 }

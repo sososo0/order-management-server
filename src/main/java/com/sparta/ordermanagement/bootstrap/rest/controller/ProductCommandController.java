@@ -2,14 +2,17 @@ package com.sparta.ordermanagement.bootstrap.rest.controller;
 
 import com.sparta.ordermanagement.application.domain.product.Product;
 import com.sparta.ordermanagement.application.domain.product.ProductForCreate;
+import com.sparta.ordermanagement.application.domain.product.ProductForDelete;
 import com.sparta.ordermanagement.application.domain.product.ProductStateForUpdate;
 import com.sparta.ordermanagement.application.service.ProductService;
 import com.sparta.ordermanagement.bootstrap.rest.dto.product.ProductCreateRequest;
 import com.sparta.ordermanagement.bootstrap.rest.dto.product.ProductCreateResponse;
+import com.sparta.ordermanagement.bootstrap.rest.dto.product.ProductDeleteResponse;
 import com.sparta.ordermanagement.bootstrap.rest.dto.product.ProductStateUpdateRequest;
 import com.sparta.ordermanagement.bootstrap.rest.dto.product.ProductStateUpdateResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -36,6 +39,7 @@ public class ProductCommandController {
     ) {
 
         // TODO : userUuid 추가 & OWNER 인지 확인
+
         ProductForCreate productForCreate = productCreateRequest.toDomain(
             shopUuid,
             TEST_CREATED_USER_ID
@@ -53,7 +57,8 @@ public class ProductCommandController {
         @RequestBody ProductStateUpdateRequest productStateUpdateRequest
     ) {
 
-        // TODO : OWNER 인지 확인
+        // TODO : OWNER 인지 확인 && 삭제가 안된 상품인지 확인
+
         ProductStateForUpdate productStateForUpdate = productStateUpdateRequest.toDomain(
             shopUuid,
             productUuid,
@@ -64,5 +69,24 @@ public class ProductCommandController {
         return ProductStateUpdateResponse.from(product);
     }
 
+    @ResponseStatus(HttpStatus.OK)
+    @DeleteMapping("/{productUuid}")
+    public ProductDeleteResponse deleteProduct(
+        @PathVariable(value = "shopUuid") String shopUuid,
+        @PathVariable(value = "productUuid") String productUuid
+    ) {
+
+        // TODO : OWNER 인지 확인
+
+        ProductForDelete productForDelete = new ProductForDelete(
+            true,
+            shopUuid,
+            productUuid,
+            TEST_CREATED_USER_ID
+        );
+        Product product = productService.deleteProduct(productForDelete);
+
+        return ProductDeleteResponse.from(product);
+    }
 
 }
