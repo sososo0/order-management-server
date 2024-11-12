@@ -4,6 +4,7 @@ import com.sparta.ordermanagement.application.domain.shop.Shop;
 import com.sparta.ordermanagement.application.domain.shop.ShopForCreate;
 import com.sparta.ordermanagement.application.domain.shop.ShopForUpdate;
 import com.sparta.ordermanagement.application.exception.shop.ShopIdInvalidException;
+import com.sparta.ordermanagement.application.exception.shop.ShopUuidInvalidException;
 import com.sparta.ordermanagement.application.output.ShopOutputPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -33,5 +34,10 @@ public class ShopService {
     private Shop validateShopIdAndGetShop(String shopId) {
         return shopOutputPort.findById(shopId)
             .orElseThrow(() -> new ShopIdInvalidException(shopId));
+    }
+
+    public void validateShopUuid(String shopUuid) {
+        shopOutputPort.findByShopUuid(shopUuid)
+            .orElseThrow(() -> new ShopUuidInvalidException(shopUuid));
     }
 }

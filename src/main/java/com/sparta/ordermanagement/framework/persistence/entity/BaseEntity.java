@@ -31,6 +31,9 @@ public class BaseEntity {
     private LocalDateTime deletedAt;
     private String deletedBy;
 
+    @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT false")
+    private boolean isDeleted = false;
+
     protected BaseEntity(String createdBy, String updatedBy) {
         this.createdBy = createdBy;
         this.updatedBy = updatedBy;
@@ -38,5 +41,14 @@ public class BaseEntity {
 
     protected void updateFrom(String updatedUserId) {
         this.updatedBy = updatedUserId;
+    }
+
+    protected void delete(boolean deleteRequest) {
+        this.isDeleted = deleteRequest;
+        this.deletedAt = LocalDateTime.now();
+    }
+
+    protected void deleteFrom(String deletedUserUuid) {
+        this.deletedBy = deletedUserUuid;
     }
 }

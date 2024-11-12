@@ -1,0 +1,65 @@
+package com.sparta.ordermanagement.framework.persistence.adapter;
+
+import com.sparta.ordermanagement.application.domain.product.Product;
+import com.sparta.ordermanagement.application.domain.product.ProductForCreate;
+import com.sparta.ordermanagement.application.domain.product.ProductForDelete;
+import com.sparta.ordermanagement.application.domain.product.ProductStateForUpdate;
+import com.sparta.ordermanagement.application.exception.product.ProductUuidInvalidException;
+import com.sparta.ordermanagement.application.exception.shop.ShopUuidInvalidException;
+import com.sparta.ordermanagement.application.output.ProductOutputPort;
+import com.sparta.ordermanagement.framework.persistence.entity.product.ProductEntity;
+import com.sparta.ordermanagement.framework.persistence.entity.shop.ShopEntity;
+import com.sparta.ordermanagement.framework.persistence.repository.ProductRepository;
+import com.sparta.ordermanagement.framework.persistence.repository.ShopRepository;
+import java.util.Optional;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
+@RequiredArgsConstructor
+@Component
+public class ProductPersistenceAdapter implements ProductOutputPort {
+
+    private final ProductRepository productRepository;
+    private final ShopRepository shopRepository;
+
+    public Optional<Product> findByProductUuid(String productUuid) {
+        return productRepository.findByProductUuid(productUuid)
+            .map(ProductEntity::toDomain)
+            .or(Optional::empty);
+    }
+
+    @Override
+    public Product saveProduct(ProductForCreate productForCreate) {
+
+        ShopEntity shopEntity = shopRepository.findByShopUuid(productForCreate.shopUuid())
+            .orElseThrow(() -> new ShopUuidInvalidException(productForCreate.shopUuid()));
+
+        return productRepository.save(ProductEntity.from(productForCreate, shopEntity)).toDomain();
+    }
+
+    @Transactional
+    @Override
+    public Product updateProductState(ProductStateForUpdate productStateForUpdate) {
+
+        ProductEntity productEntity = getProductByUuid(productStateForUpdate.productUuid());
+        productEntity.updateProductState(productStateForUpdate);
+
+        return productEntity.toDomain();
+    }
+
+    @Transactional
+    @Override
+    public Product deleteProduct(ProductForDelete productForDelete) {
+
+        ProductEntity productEntity = getProductByUuid(productForDelete.productUuid());
+        productEntity.deleteProduct(productForDelete);
+
+        return productEntity.toDomain();
+    }
+
+    private ProductEntity getProductByUuid(String productUuid) {
+        return productRepository.findByProductUuid(productUuid)
+            .orElseThrow(() -> new ProductUuidInvalidException(productUuid));
+    }
+}
