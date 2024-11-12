@@ -38,7 +38,7 @@ public class ProductCommandController {
         @RequestBody ProductCreateRequest productCreateRequest
     ) {
 
-        // TODO : userUuid 추가 & OWNER 인지 확인
+        // TODO : OWNER 인지 확인
 
         ProductForCreate productForCreate = productCreateRequest.toDomain(
             shopUuid,
@@ -57,7 +57,7 @@ public class ProductCommandController {
         @RequestBody ProductStateUpdateRequest productStateUpdateRequest
     ) {
 
-        // TODO : OWNER 인지 확인 && 삭제가 안된 상품인지 확인
+        // TODO : OWNER 인지 확인
 
         ProductStateForUpdate productStateForUpdate = productStateUpdateRequest.toDomain(
             shopUuid,
