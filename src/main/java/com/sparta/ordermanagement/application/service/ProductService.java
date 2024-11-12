@@ -2,6 +2,9 @@ package com.sparta.ordermanagement.application.service;
 
 import com.sparta.ordermanagement.application.domain.product.Product;
 import com.sparta.ordermanagement.application.domain.product.ProductForCreate;
+import com.sparta.ordermanagement.application.domain.product.ProductStateForUpdate;
+import com.sparta.ordermanagement.application.exception.product.ProductNotBelongToShopException;
+import com.sparta.ordermanagement.application.exception.product.ProductUuidInvalidException;
 import com.sparta.ordermanagement.application.output.ProductOutputPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,5 +21,27 @@ public class ProductService {
         return productOutputPort.saveProduct(productForCreate);
     }
 
+    public Product updateProductState(ProductStateForUpdate productStateForUpdate) {
 
+        shopService.validateShopUuid(productStateForUpdate.shopUuid());
+
+        Product product = validateProductUuidAndGetProduct(productStateForUpdate.productUuid());
+        validateProductBelongToShop(product, productStateForUpdate.shopUuid());
+
+        return productOutputPort.updateProductState(productStateForUpdate);
+    }
+
+    private Product validateProductUuidAndGetProduct(String productUuid) {
+        return productOutputPort.findByProductUuid(productUuid)
+            .orElseThrow(() -> new ProductUuidInvalidException(productUuid));
+    }
+
+    private void validateProductBelongToShop(Product product, String shopUuid) {
+        if (!product.isSameShop(shopUuid)) {
+            throw new ProductNotBelongToShopException(
+                product.getProductUuid(),
+                shopUuid
+            );
+        }
+    }
 }

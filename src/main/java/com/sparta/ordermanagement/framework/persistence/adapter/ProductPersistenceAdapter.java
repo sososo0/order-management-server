@@ -2,14 +2,20 @@ package com.sparta.ordermanagement.framework.persistence.adapter;
 
 import com.sparta.ordermanagement.application.domain.product.Product;
 import com.sparta.ordermanagement.application.domain.product.ProductForCreate;
+import com.sparta.ordermanagement.application.domain.product.ProductStateForUpdate;
+import com.sparta.ordermanagement.application.domain.shop.Shop;
+import com.sparta.ordermanagement.application.exception.product.ProductNotBelongToShopException;
+import com.sparta.ordermanagement.application.exception.product.ProductUuidInvalidException;
 import com.sparta.ordermanagement.application.exception.shop.ShopUuidInvalidException;
 import com.sparta.ordermanagement.application.output.ProductOutputPort;
 import com.sparta.ordermanagement.framework.persistence.entity.product.ProductEntity;
 import com.sparta.ordermanagement.framework.persistence.entity.shop.ShopEntity;
 import com.sparta.ordermanagement.framework.persistence.repository.ProductRepository;
 import com.sparta.ordermanagement.framework.persistence.repository.ShopRepository;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Component
@@ -18,6 +24,11 @@ public class ProductPersistenceAdapter implements ProductOutputPort {
     private final ProductRepository productRepository;
     private final ShopRepository shopRepository;
 
+    public Optional<Product> findByProductUuid(String productUuid) {
+        return productRepository.findByProductUuid(productUuid)
+            .map(ProductEntity::toDomain)
+            .or(Optional::empty);
+    }
 
     @Override
     public Product saveProduct(ProductForCreate productForCreate) {
@@ -26,5 +37,17 @@ public class ProductPersistenceAdapter implements ProductOutputPort {
             .orElseThrow(() -> new ShopUuidInvalidException(productForCreate.shopUuid()));
 
         return productRepository.save(ProductEntity.from(productForCreate, shopEntity)).toDomain();
+    }
+
+    @Transactional
+    @Override
+    public Product updateProductState(ProductStateForUpdate productStateForUpdate) {
+
+        ProductEntity productEntity = productRepository.findByProductUuid(productStateForUpdate.productUuid())
+            .orElseThrow(() -> new ProductUuidInvalidException(productStateForUpdate.productUuid()));
+
+        productEntity.updateProductState(productStateForUpdate);
+
+        return productEntity.toDomain();
     }
 }

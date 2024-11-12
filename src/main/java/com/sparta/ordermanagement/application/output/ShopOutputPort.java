@@ -13,5 +13,5 @@ public interface ShopOutputPort {
 
     String updateShop(ShopForUpdate shopForUpdate);
 
-    Optional <Shop> findByShopUuid(String shopUuid);
+    Optional<Shop> findByShopUuid(String shopUuid);
 }

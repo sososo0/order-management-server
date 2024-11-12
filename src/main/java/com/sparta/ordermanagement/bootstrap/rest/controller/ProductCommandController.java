@@ -2,11 +2,15 @@ package com.sparta.ordermanagement.bootstrap.rest.controller;
 
 import com.sparta.ordermanagement.application.domain.product.Product;
 import com.sparta.ordermanagement.application.domain.product.ProductForCreate;
+import com.sparta.ordermanagement.application.domain.product.ProductStateForUpdate;
 import com.sparta.ordermanagement.application.service.ProductService;
 import com.sparta.ordermanagement.bootstrap.rest.dto.product.ProductCreateRequest;
 import com.sparta.ordermanagement.bootstrap.rest.dto.product.ProductCreateResponse;
+import com.sparta.ordermanagement.bootstrap.rest.dto.product.ProductStateUpdateRequest;
+import com.sparta.ordermanagement.bootstrap.rest.dto.product.ProductStateUpdateResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,6 +23,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/shops/{shopUuid}/products")
 public class ProductCommandController {
 
+    // TODO: 추후에 지울 예정
+    private static final String TEST_CREATED_USER_ID = "0000";
+
     private final ProductService productService;
 
     @ResponseStatus(HttpStatus.CREATED)
@@ -28,9 +35,31 @@ public class ProductCommandController {
         @RequestBody ProductCreateRequest productCreateRequest
     ) {
 
+        // TODO : userUuid 추가 & OWNER 인지 확인
         ProductForCreate productForCreate = productCreateRequest.toDomain(shopUuid);
         Product product = productService.createProduct(productForCreate);
 
         return ProductCreateResponse.from(product);
     }
+
+    @ResponseStatus(HttpStatus.OK)
+    @PatchMapping("/{productUuid}")
+    public ProductStateUpdateResponse updateProductState(
+        @PathVariable(value = "shopUuid") String shopUuid,
+        @PathVariable(value = "productUuid") String productUuid,
+        @RequestBody ProductStateUpdateRequest productStateUpdateRequest
+    ) {
+
+        // TODO : OWNER 인지 확인
+        ProductStateForUpdate productStateForUpdate = productStateUpdateRequest.toDomain(
+            shopUuid,
+            productUuid,
+            TEST_CREATED_USER_ID
+        );
+        Product product = productService.updateProductState(productStateForUpdate);
+
+        return ProductStateUpdateResponse.from(product);
+    }
+
+
 }

@@ -31,6 +31,10 @@ public class Product {
         this.shop = shop;
     }
 
+    public boolean isSameShop(String shopUuid) {
+        return shop.getUuid().equals(shopUuid);
+    }
+
     public Long getId() {
         return id;
     }
