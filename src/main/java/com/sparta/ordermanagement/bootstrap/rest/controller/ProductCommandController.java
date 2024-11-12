@@ -36,7 +36,10 @@ public class ProductCommandController {
     ) {
 
         // TODO : userUuid 추가 & OWNER 인지 확인
-        ProductForCreate productForCreate = productCreateRequest.toDomain(shopUuid);
+        ProductForCreate productForCreate = productCreateRequest.toDomain(
+            shopUuid,
+            TEST_CREATED_USER_ID
+        );
         Product product = productService.createProduct(productForCreate);
 
         return ProductCreateResponse.from(product);

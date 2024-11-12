@@ -47,8 +47,10 @@ public class ProductEntity extends BaseEntity {
         Integer productPrice,
         String productDescription,
         ProductState productState,
-        ShopEntity shopEntity
+        ShopEntity shopEntity,
+        String createUserUuid
     ) {
+        super(createUserUuid, createUserUuid);
         this.productName = productName;
         this.productPrice = productPrice;
         this.productDescription = productDescription;
@@ -71,7 +73,8 @@ public class ProductEntity extends BaseEntity {
             productForCreate.productPrice(),
             productForCreate.productDescription(),
             productForCreate.productState(),
-            shopEntity
+            shopEntity,
+            productForCreate.userUuid()
         );
     }
 
