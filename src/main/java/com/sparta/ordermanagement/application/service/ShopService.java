@@ -31,7 +31,7 @@ public class ShopService {
         return shopOutputPort.updateShop(shopForUpdate);
     }
 
-    private Shop validateShopIdAndGetShop(String shopId) {
+    public Shop validateShopIdAndGetShop(String shopId) {
         return shopOutputPort.findById(shopId)
             .orElseThrow(() -> new ShopIdInvalidException(shopId));
     }

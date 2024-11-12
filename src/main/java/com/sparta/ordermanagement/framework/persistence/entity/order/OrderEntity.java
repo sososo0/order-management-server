@@ -42,6 +42,9 @@ public class OrderEntity extends BaseEntity {
     @Column(columnDefinition = "varchar(255)")
     private String requestOrder;
 
+    @Column(columnDefinition = "varchar(255)")
+    private String shopId;
+
     @JoinColumn(nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private UserEntity userEntity;
@@ -49,18 +52,17 @@ public class OrderEntity extends BaseEntity {
     @OneToMany(mappedBy = "orderEntity", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderProductEntity> orderProducts = new ArrayList<>();
 
-    private OrderEntity(String orderUuid, OrderState orderState,
-                        OrderType orderType, UserEntity userEntity,
-                        String deliveryAddress, String requestOrder) {
+    private OrderEntity(OrderState orderState,
+                        OrderType orderType, String deliveryAddress,
+                        String requestOrder, String shopId, UserEntity userEntity) {
 
-        this.orderUuid = orderUuid;
         this.orderState = orderState;
         this.orderType = orderType;
-        this.userEntity = userEntity;
         this.deliveryAddress = deliveryAddress;
         this.requestOrder = requestOrder;
+        this.shopId = shopId;
+        this.userEntity = userEntity;
     }
-
 
     @PrePersist
     private void prePersistence() {
@@ -69,18 +71,24 @@ public class OrderEntity extends BaseEntity {
 
     public Order toDomain() {
 
-        return new Order(id, orderUuid, orderState, orderType, userEntity.getUserId());
+        return new Order(id, orderUuid, orderState, orderType,
+                deliveryAddress, requestOrder, shopId, userEntity.getUserId());
     }
 
     public static OrderEntity from(OrderForCreate orderForCreate, UserEntity userEntity) {
 
+
         return new OrderEntity(
-                orderForCreate.orderId(),
                 orderForCreate.orderState(),
                 orderForCreate.orderType(),
-                userEntity,
                 orderForCreate.deliveryAddress(),
-                orderForCreate.requestOrder()
-        );
+                orderForCreate.requestOrder(),
+                orderForCreate.shopId(),
+                userEntity);
+    }
+
+    public void updateFrom(OrderForUpdate orderForUpdate, UserEntity userEntity) {
+        /* 입력된 orderId가 DB에 있는지 체크, 맞으면 유저 id가 맞는지 체크(단 점주나 관리자 권한의 경우 무시)
+        * 주문 상태, 배송 주소, 요청사항 등을 변경*/
     }
 }
