@@ -29,6 +29,7 @@ public class ProductService {
 
         Product product = validateProductUuidAndGetProduct(productStateForUpdate.productUuid());
         validateProductBelongToShop(product, productStateForUpdate.shopUuid());
+        validateProductIsNotDeleted(product);
 
         return productOutputPort.updateProductState(productStateForUpdate);
     }
