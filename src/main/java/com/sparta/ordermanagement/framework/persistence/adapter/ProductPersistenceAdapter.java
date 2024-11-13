@@ -9,8 +9,11 @@ import com.sparta.ordermanagement.application.exception.shop.ShopUuidInvalidExce
 import com.sparta.ordermanagement.application.output.ProductOutputPort;
 import com.sparta.ordermanagement.framework.persistence.entity.product.ProductEntity;
 import com.sparta.ordermanagement.framework.persistence.entity.shop.ShopEntity;
+import com.sparta.ordermanagement.framework.persistence.repository.ProductQueryRepository;
 import com.sparta.ordermanagement.framework.persistence.repository.ProductRepository;
 import com.sparta.ordermanagement.framework.persistence.repository.ShopRepository;
+import com.sparta.ordermanagement.framework.persistence.vo.Cursor;
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -21,12 +24,20 @@ import org.springframework.transaction.annotation.Transactional;
 public class ProductPersistenceAdapter implements ProductOutputPort {
 
     private final ProductRepository productRepository;
+    private final ProductQueryRepository productQueryRepository;
     private final ShopRepository shopRepository;
 
     public Optional<Product> findByProductUuid(String productUuid) {
         return productRepository.findByProductUuid(productUuid)
             .map(ProductEntity::toDomain)
             .or(Optional::empty);
+    }
+
+    public List<Product> findAllByShopUuid(String shopUuid, Cursor cursor) {
+        return productQueryRepository.findAllByShopUuid(shopUuid, cursor)
+            .stream()
+            .map(ProductEntity::toDomain)
+            .toList();
     }
 
     @Override

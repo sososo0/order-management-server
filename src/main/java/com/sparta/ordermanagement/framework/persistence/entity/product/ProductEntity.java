@@ -59,7 +59,6 @@ public class ProductEntity extends BaseEntity {
         this.shopEntity = shopEntity;
     }
 
-
     @PrePersist
     private void prePersistence() {
         productUuid = UUID.randomUUID().toString();
