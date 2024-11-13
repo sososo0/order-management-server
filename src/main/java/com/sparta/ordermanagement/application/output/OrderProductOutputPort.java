@@ -1,4 +1,4 @@
 package com.sparta.ordermanagement.application.output;
 
-public class OrderProductOutPutPort {
+public interface OrderProductOutputPort {
 }

@@ -1,15 +1,18 @@
 package com.sparta.ordermanagement.framework.persistence.entity.orderproduct;
 
 
+import com.sparta.ordermanagement.application.domain.order.COrderForCreate;
 import com.sparta.ordermanagement.application.domain.order.OrderForCreate;
-import com.sparta.ordermanagement.application.domain.product.Product;
+import com.sparta.ordermanagement.application.domain.orderproduct.OrderProduct;
 import com.sparta.ordermanagement.framework.persistence.entity.BaseEntity;
-import com.sparta.ordermanagement.framework.persistence.entity.order.OrderEntity;
 import com.sparta.ordermanagement.framework.persistence.entity.product.ProductEntity;
+import com.sparta.ordermanagement.framework.persistence.entity.order.OrderEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.UUID;
 
 @Getter
 @NoArgsConstructor
@@ -36,8 +39,8 @@ public class OrderProductEntity extends BaseEntity {
     @Column(nullable = false, columnDefinition = "INTEGER")
     private int orderPrice;
 
-    private OrderProductEntity(
-            OrderEntity orderEntity, ProductEntity productEntity, int count, int orderPrice) {
+    private OrderProductEntity(OrderEntity orderEntity, ProductEntity productEntity, int count, int orderPrice) {
+
         this.orderEntity = orderEntity;
         this.productEntity = productEntity;
         this.count = count;
