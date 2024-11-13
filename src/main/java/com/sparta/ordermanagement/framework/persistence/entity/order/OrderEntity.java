@@ -32,6 +32,7 @@ public class OrderEntity extends BaseEntity {
     @Column(nullable = false, columnDefinition = "varchar(255)")
     private OrderState orderState;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false, columnDefinition = "varchar(255)")
     private OrderType orderType;
 

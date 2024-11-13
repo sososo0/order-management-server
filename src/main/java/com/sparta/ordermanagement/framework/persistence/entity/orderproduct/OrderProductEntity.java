@@ -1,18 +1,14 @@
 package com.sparta.ordermanagement.framework.persistence.entity.orderproduct;
 
 
-import com.sparta.ordermanagement.application.domain.order.COrderForCreate;
 import com.sparta.ordermanagement.application.domain.order.OrderForCreate;
-import com.sparta.ordermanagement.application.domain.orderproduct.OrderProduct;
 import com.sparta.ordermanagement.framework.persistence.entity.BaseEntity;
-import com.sparta.ordermanagement.framework.persistence.entity.product.ProductEntity;
 import com.sparta.ordermanagement.framework.persistence.entity.order.OrderEntity;
+import com.sparta.ordermanagement.framework.persistence.entity.product.ProductEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.util.UUID;
 
 @Getter
 @NoArgsConstructor
@@ -47,9 +43,9 @@ public class OrderProductEntity extends BaseEntity {
         this.orderPrice = orderPrice;
     }
 
-    public static OrderProductEntity from(OrderForCreate orderForCreate, OrderEntity orderEntity) {
+    public static OrderProductEntity from(OrderForCreate orderForCreate, OrderEntity orderEntity, ProductEntity productEntity) {
 
-        ProductEntity productEntity = ProductEntity.valueOf(orderForCreate.productId());
+//        ProductEntity productEntity = ProductEntity.valueOf(orderForCreate.productId());
 
         return new OrderProductEntity(
                 orderEntity,

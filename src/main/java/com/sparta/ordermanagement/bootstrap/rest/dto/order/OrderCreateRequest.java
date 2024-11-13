@@ -28,7 +28,7 @@ public class OrderCreateRequest {
     @NotBlank
     OrderType orderType;
 
-    String deliverAddress;
+    String deliveryAddress;
 
     String requestOrder;
 
@@ -43,6 +43,6 @@ public class OrderCreateRequest {
     int orderPrice;
 
     public OrderForCreate toOrderDomain(String createdUserId) {
-        return new OrderForCreate(userId, shopId, orderState, orderType, deliverAddress, requestOrder, productId, count, orderPrice, createdUserId);
+        return new OrderForCreate(userId, shopId, orderState, orderType, deliveryAddress, requestOrder, productId, count, orderPrice, createdUserId);
     }
 }

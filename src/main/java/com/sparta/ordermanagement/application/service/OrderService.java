@@ -1,8 +1,6 @@
 package com.sparta.ordermanagement.application.service;
 
 import com.sparta.ordermanagement.application.domain.order.OrderForCreate;
-import com.sparta.ordermanagement.application.domain.product.Product;
-import com.sparta.ordermanagement.application.domain.shop.Shop;
 import com.sparta.ordermanagement.application.output.OrderOutputPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
