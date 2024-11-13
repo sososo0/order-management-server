@@ -7,20 +7,12 @@ import jakarta.validation.constraints.NotBlank;
 public class OrderUpdateRequest {
 
     @NotBlank
-    String orderId;
-
-    @NotBlank
     String userId;
 
     @NotBlank
     OrderState orderState;
 
-    String deliveryAddress;
-
-    String requestOrder;
-
     public OrderForUpdate toDomain(String orderId, String updateUserId) {
-        return new OrderForUpdate(orderId, userId, orderState,
-                deliveryAddress, requestOrder, updateUserId);
+        return new OrderForUpdate(orderId, userId, orderState, updateUserId);
     }
 }

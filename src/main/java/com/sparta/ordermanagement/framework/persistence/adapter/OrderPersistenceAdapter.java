@@ -2,6 +2,7 @@ package com.sparta.ordermanagement.framework.persistence.adapter;
 
 import com.sparta.ordermanagement.application.domain.order.Order;
 import com.sparta.ordermanagement.application.domain.order.OrderForCreate;
+import com.sparta.ordermanagement.application.domain.order.OrderForUpdate;
 import com.sparta.ordermanagement.application.exception.order.ProductIdInvalidException;
 import com.sparta.ordermanagement.application.output.OrderOutputPort;
 import com.sparta.ordermanagement.framework.persistence.entity.order.OrderEntity;
@@ -13,6 +14,8 @@ import com.sparta.ordermanagement.framework.persistence.repository.ProductReposi
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Component
@@ -35,5 +38,20 @@ public class OrderPersistenceAdapter implements OrderOutputPort {
         orderProductRepository.save(orderProductEntity);
 
         return orderEntity.toDomain();
+    }
+
+    @Override
+    public Optional<Order> findByOrderId(String orderId) {
+        return orderRepository.findByOrderUuid(orderId)
+                .map(OrderEntity::toDomain)
+                .or(Optional::empty);
+    }
+
+    @Override
+    public String updateOrderState(OrderForUpdate orderForUpdate) {
+        OrderEntity orderEntity = orderRepository.findByOrderUuid(orderForUpdate.orderId()).get();
+        orderEntity.updateState(orderForUpdate);
+
+        return orderEntity.getOrderUuid();
     }
 }

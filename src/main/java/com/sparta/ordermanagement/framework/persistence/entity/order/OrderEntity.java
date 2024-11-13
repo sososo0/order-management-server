@@ -2,6 +2,7 @@ package com.sparta.ordermanagement.framework.persistence.entity.order;
 
 import com.sparta.ordermanagement.application.domain.order.Order;
 import com.sparta.ordermanagement.application.domain.order.OrderForCreate;
+import com.sparta.ordermanagement.application.domain.order.OrderForUpdate;
 import com.sparta.ordermanagement.framework.persistence.entity.BaseEntity;
 import com.sparta.ordermanagement.framework.persistence.entity.orderproduct.OrderProductEntity;
 import com.sparta.ordermanagement.framework.persistence.entity.user.UserEntity;
@@ -87,5 +88,11 @@ public class OrderEntity extends BaseEntity {
                 orderForCreate.requestOrder(),
                 orderForCreate.shopId(),
                 createdUser);
+    }
+
+    public void updateState(OrderForUpdate orderForUpdate) {
+
+        this.orderState = orderForUpdate.orderState();
+        super.updateFrom(orderForUpdate.updateUserId());
     }
 }
