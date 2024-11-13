@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 public class UserEntity extends BaseEntity {
 
     @Id
-    @Column(name ="id")
+    @Column(name ="user_id")
     private String userId;
 
     @Column(nullable = false, columnDefinition = "varchar(255)")

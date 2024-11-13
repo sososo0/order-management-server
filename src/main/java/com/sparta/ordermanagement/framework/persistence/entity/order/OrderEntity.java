@@ -55,6 +55,7 @@ public class OrderEntity extends BaseEntity {
                         OrderType orderType, String deliveryAddress,
                         String requestOrder, String shopId, UserEntity userEntity) {
 
+        id = null;
         this.orderState = orderState;
         this.orderType = orderType;
         this.deliveryAddress = deliveryAddress;
