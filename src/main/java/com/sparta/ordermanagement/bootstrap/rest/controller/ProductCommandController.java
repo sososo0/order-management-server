@@ -10,6 +10,7 @@ import com.sparta.ordermanagement.bootstrap.rest.dto.product.ProductCreateRespon
 import com.sparta.ordermanagement.bootstrap.rest.dto.product.ProductDeleteResponse;
 import com.sparta.ordermanagement.bootstrap.rest.dto.product.ProductStateUpdateRequest;
 import com.sparta.ordermanagement.bootstrap.rest.dto.product.ProductStateUpdateResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -35,7 +36,7 @@ public class ProductCommandController {
     @PostMapping
     public ProductCreateResponse createProduct(
         @PathVariable(value = "shopUuid") String shopUuid,
-        @RequestBody ProductCreateRequest productCreateRequest
+        @Valid @RequestBody ProductCreateRequest productCreateRequest
     ) {
 
         // TODO : OWNER 인지 확인
@@ -54,7 +55,7 @@ public class ProductCommandController {
     public ProductStateUpdateResponse updateProductState(
         @PathVariable(value = "shopUuid") String shopUuid,
         @PathVariable(value = "productUuid") String productUuid,
-        @RequestBody ProductStateUpdateRequest productStateUpdateRequest
+        @Valid @RequestBody ProductStateUpdateRequest productStateUpdateRequest
     ) {
 
         // TODO : OWNER 인지 확인
