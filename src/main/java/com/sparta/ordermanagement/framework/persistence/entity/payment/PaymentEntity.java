@@ -7,6 +7,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.UUID;
+
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
@@ -15,8 +17,11 @@ public class PaymentEntity extends BaseEntity {
 
     @Id
     @Column(name = "payment_id")
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(unique = true, name = "payment_uuid")
+    private String paymentUuid;
 
     @Column(nullable = false, columnDefinition = "INTEGER")
     private int amount;
@@ -31,5 +36,20 @@ public class PaymentEntity extends BaseEntity {
     @JoinColumn(nullable = false)
     @OneToOne(fetch = FetchType.LAZY)
     private OrderEntity orderEntity;
+
+    private PaymentEntity(
+            int amount, PaymentState paymentState,
+            String pgProvider, OrderEntity orderEntity) {
+
+        this.amount = amount;
+        this.paymentState = paymentState;
+        this.pgProvider = pgProvider;
+        this.orderEntity = orderEntity;
+    }
+
+    @PrePersist
+    private void prePersistence() {
+        paymentUuid = UUID.randomUUID().toString();
+    }
 
 }

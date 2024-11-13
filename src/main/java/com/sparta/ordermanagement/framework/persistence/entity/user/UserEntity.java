@@ -15,7 +15,7 @@ public class UserEntity extends BaseEntity {
 
     @Id
     @Column(name ="user_id")
-    private String id;
+    private String userId;
 
     @Column(nullable = false, columnDefinition = "varchar(255)")
     private String password;
@@ -27,4 +27,12 @@ public class UserEntity extends BaseEntity {
     @JoinColumn(name = "region_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private RegionEntity regionEntity;
+
+    private UserEntity(String userId) {
+        this.userId = userId;
+    }
+
+    public static UserEntity valueOf(String userId) {
+        return new UserEntity(userId);
+    }
 }
