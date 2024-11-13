@@ -44,6 +44,6 @@ public class OrderCommandController {
     @PatchMapping("{order_id}/cancel")
     public String cancelOrder(@PathVariable("order_id") String orderId) {
 
-        return null;
+        return orderService.cancelOrder(orderId);
     }
 }

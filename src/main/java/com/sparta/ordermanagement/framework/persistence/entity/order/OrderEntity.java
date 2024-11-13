@@ -95,4 +95,11 @@ public class OrderEntity extends BaseEntity {
         this.orderState = orderForUpdate.orderState();
         super.updateFrom(orderForUpdate.updateUserId());
     }
+
+    public void cancelOrder() {
+
+        this.orderState = OrderState.CANCELED;
+        /* 업데이트 유저 바꾸는 건 유저 검증 만들어지면 추가*/
+        //super.updateFrom();
+    }
 }

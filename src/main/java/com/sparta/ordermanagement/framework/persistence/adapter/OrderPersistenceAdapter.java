@@ -54,4 +54,12 @@ public class OrderPersistenceAdapter implements OrderOutputPort {
 
         return orderEntity.getOrderUuid();
     }
+
+    @Override
+    public String cancelOrder(Order order) {
+        OrderEntity orderEntity = orderRepository.findByOrderUuid(order.getOrderUuid()).get();
+        orderEntity.cancelOrder();
+
+        return orderEntity.getOrderUuid();
+    }
 }

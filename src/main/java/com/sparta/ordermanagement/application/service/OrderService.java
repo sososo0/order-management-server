@@ -4,9 +4,13 @@ import com.sparta.ordermanagement.application.domain.order.Order;
 import com.sparta.ordermanagement.application.domain.order.OrderForCreate;
 import com.sparta.ordermanagement.application.domain.order.OrderForUpdate;
 import com.sparta.ordermanagement.application.exception.order.InvalidOrderException;
+import com.sparta.ordermanagement.application.exception.order.OrderCancellationTimeExceededException;
 import com.sparta.ordermanagement.application.output.OrderOutputPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 @RequiredArgsConstructor
 @Service
@@ -43,9 +47,25 @@ public class OrderService {
         return orderOutPutPort.updateOrderState(orderForUpdate);
     }
 
+    public String cancelOrder(String orderId) {
+        // 유저 검증 부분 일단 생략 - 5분 제한 시간 확인은 어디서 하는 게 좋을까?
+        Order order = validateOrderIdAndGetOrder(orderId);
+
+        // 일단 order에서 생성 시간을 가져왔다고 치고 기능 개발
+//        LocalDateTime orderTime = order.getCreatedAt();
+        LocalDateTime orderTime = LocalDateTime.now();
+        LocalDateTime currentTime = LocalDateTime.now();
+        Duration duration = Duration.between(orderTime, currentTime);
+
+        if (duration.toMinutes() > 5) {
+            throw new OrderCancellationTimeExceededException(orderId);
+        }
+
+        return orderOutPutPort.cancelOrder(order);
+    }
+
     private Order validateOrderIdAndGetOrder(String orderId) {
         return orderOutPutPort.findByOrderId(orderId)
                 .orElseThrow(() -> new InvalidOrderException(orderId));
     }
-
 }

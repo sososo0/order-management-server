@@ -13,4 +13,6 @@ public interface OrderOutputPort {
     Optional<Order> findByOrderId(String orderId);
 
     String updateOrderState(OrderForUpdate orderForUpdate);
+
+    String cancelOrder(Order order);
 }
