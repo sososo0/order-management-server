@@ -1,5 +1,6 @@
 package com.sparta.ordermanagement.framework.persistence.entity.product;
 
+import com.sparta.ordermanagement.application.domain.order.OrderForCreate;
 import com.sparta.ordermanagement.application.domain.product.Product;
 import com.sparta.ordermanagement.application.domain.product.ProductForCreate;
 import com.sparta.ordermanagement.application.domain.product.ProductForDelete;
@@ -100,4 +101,13 @@ public class ProductEntity extends BaseEntity {
         super.delete(productForDelete.deleteRequest());
         super.deleteFrom(productForDelete.userUuid());
     }
+
+    private ProductEntity(String productUuid) {
+        this.productUuid = productUuid;
+    }
+
+    public static ProductEntity valueOf(String productId) {
+        return new ProductEntity(productId);
+    }
+
 }

@@ -7,12 +7,12 @@ public class Order {
 
     private Long id;
     private String orderUuid;
+    private String userId;
+    private String shopId;
     private OrderState orderState;
     private OrderType orderType;
     private String deliveryAddress;
     private String requestOrder;
-    private String shopId;
-    private String userId;
 
     public Order(Long id, String orderUuid, OrderState orderState,
                  OrderType orderType, String deliveryAddress, String requestOrder,

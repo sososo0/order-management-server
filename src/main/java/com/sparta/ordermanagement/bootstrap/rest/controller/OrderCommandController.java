@@ -1,10 +1,8 @@
 package com.sparta.ordermanagement.bootstrap.rest.controller;
 
 import com.sparta.ordermanagement.application.domain.order.OrderForCreate;
-import com.sparta.ordermanagement.application.domain.order.OrderForUpdate;
 import com.sparta.ordermanagement.application.service.OrderService;
 import com.sparta.ordermanagement.bootstrap.rest.dto.order.OrderCreateRequest;
-import com.sparta.ordermanagement.bootstrap.rest.dto.order.OrderUpdateRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -25,18 +23,7 @@ public class OrderCommandController {
     @PostMapping
     public String createOrder(@RequestBody OrderCreateRequest orderCreateRequest) {
 
-        OrderForCreate orderForCreate = orderCreateRequest.toDomain(TEST_CREATED_USER_ID);
-
+        OrderForCreate orderForCreate = orderCreateRequest.toOrderDomain(TEST_CREATED_USER_ID);
         return orderService.createOrder(orderForCreate);
-    }
-
-    @ResponseStatus(HttpStatus.OK)
-    @PatchMapping("/{order_id}")
-    public String updateOrder(@PathVariable("order_id") String orderId,
-                              @RequestBody OrderUpdateRequest orderUpdateRequest) {
-
-        OrderForUpdate orderForUpdate = orderUpdateRequest.toDomain(orderId, TEST_CREATED_USER_ID);
-
-        return orderService.updateOrder(orderForUpdate);
     }
 }

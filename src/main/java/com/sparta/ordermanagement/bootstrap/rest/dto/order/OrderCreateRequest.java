@@ -15,11 +15,12 @@ import lombok.ToString;
 @AllArgsConstructor
 public class OrderCreateRequest {
 
-    @NotBlank
-    String orderId;
-
+    /* Order */
     @NotBlank
     String userId;
+
+    @NotBlank
+    String shopId;
 
     @NotBlank
     OrderState orderState;
@@ -31,8 +32,17 @@ public class OrderCreateRequest {
 
     String requestOrder;
 
-    public OrderForCreate toDomain(String createUserId) {
-        return new OrderForCreate(orderId, userId, orderState, orderType,
-                deliverAddress, requestOrder, createUserId);
+    /* OrderProduct */
+    @NotBlank
+    String productId;
+
+    @NotBlank
+    int count;
+
+    @NotBlank
+    int orderPrice;
+
+    public OrderForCreate toOrderDomain(String createdUserId) {
+        return new OrderForCreate(userId, shopId, orderState, orderType, deliverAddress, requestOrder, productId, count, orderPrice, createdUserId);
     }
 }

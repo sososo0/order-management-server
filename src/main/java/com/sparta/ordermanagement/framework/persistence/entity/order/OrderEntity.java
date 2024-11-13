@@ -2,7 +2,6 @@ package com.sparta.ordermanagement.framework.persistence.entity.order;
 
 import com.sparta.ordermanagement.application.domain.order.Order;
 import com.sparta.ordermanagement.application.domain.order.OrderForCreate;
-import com.sparta.ordermanagement.application.domain.order.OrderForUpdate;
 import com.sparta.ordermanagement.framework.persistence.entity.BaseEntity;
 import com.sparta.ordermanagement.framework.persistence.entity.orderproduct.OrderProductEntity;
 import com.sparta.ordermanagement.framework.persistence.entity.user.UserEntity;
@@ -75,8 +74,9 @@ public class OrderEntity extends BaseEntity {
                 deliveryAddress, requestOrder, shopId, userEntity.getUserId());
     }
 
-    public static OrderEntity from(OrderForCreate orderForCreate, UserEntity userEntity) {
+    public static OrderEntity from(OrderForCreate orderForCreate) {
 
+        UserEntity createdUser = UserEntity.valueOf(orderForCreate.userId());
 
         return new OrderEntity(
                 orderForCreate.orderState(),
@@ -84,11 +84,6 @@ public class OrderEntity extends BaseEntity {
                 orderForCreate.deliveryAddress(),
                 orderForCreate.requestOrder(),
                 orderForCreate.shopId(),
-                userEntity);
-    }
-
-    public void updateFrom(OrderForUpdate orderForUpdate, UserEntity userEntity) {
-        /* 입력된 orderId가 DB에 있는지 체크, 맞으면 유저 id가 맞는지 체크(단 점주나 관리자 권한의 경우 무시)
-        * 주문 상태, 배송 주소, 요청사항 등을 변경*/
+                createdUser);
     }
 }

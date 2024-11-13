@@ -15,9 +15,6 @@ public class UserEntity extends BaseEntity {
 
     @Id
     @Column(name ="id")
-    private Long id;
-
-    @Column(nullable = false, columnDefinition = "varchar(255)")
     private String userId;
 
     @Column(nullable = false, columnDefinition = "varchar(255)")
@@ -30,4 +27,12 @@ public class UserEntity extends BaseEntity {
     @JoinColumn(name = "region_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private RegionEntity regionEntity;
+
+    private UserEntity(String userId) {
+        this.userId = userId;
+    }
+
+    public static UserEntity valueOf(String userId) {
+        return new UserEntity(userId);
+    }
 }
