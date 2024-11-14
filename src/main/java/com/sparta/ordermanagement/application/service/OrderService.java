@@ -3,8 +3,10 @@ package com.sparta.ordermanagement.application.service;
 import com.sparta.ordermanagement.application.domain.order.Order;
 import com.sparta.ordermanagement.application.domain.order.OrderForCreate;
 import com.sparta.ordermanagement.application.domain.order.OrderForUpdate;
+import com.sparta.ordermanagement.application.domain.order.OrderState;
 import com.sparta.ordermanagement.application.exception.order.InvalidOrderException;
 import com.sparta.ordermanagement.application.exception.order.OrderCancellationTimeExceededException;
+import com.sparta.ordermanagement.application.exception.order.OrderStateChangedException;
 import com.sparta.ordermanagement.application.output.OrderOutputPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -42,7 +44,12 @@ public class OrderService {
     * 주문 상품 변경에 대한 서비스 코드는 OrderProductService 에서 가져와서 쓰기, 이 서비스 코드에서는 주문 상태 변경만 고려*/
     public String updateOrderState(OrderForUpdate orderForUpdate) {
 
+        /* 주문 상태가 cancel일 경우 어디서 못하게 막는 게 좋을까?*/
         validateOrderIdAndGetOrder(orderForUpdate.orderId());
+
+        if (orderForUpdate.orderState().equals(OrderState.CANCELED)) {
+            throw new OrderStateChangedException(orderForUpdate.orderId());
+        }
 
         return orderOutPutPort.updateOrderState(orderForUpdate);
     }
@@ -52,8 +59,7 @@ public class OrderService {
         Order order = validateOrderIdAndGetOrder(orderId);
 
         // 일단 order에서 생성 시간을 가져왔다고 치고 기능 개발
-//        LocalDateTime orderTime = order.getCreatedAt();
-        LocalDateTime orderTime = LocalDateTime.now();
+        LocalDateTime orderTime = order.getCreatedAt();
         LocalDateTime currentTime = LocalDateTime.now();
         Duration duration = Duration.between(orderTime, currentTime);
 

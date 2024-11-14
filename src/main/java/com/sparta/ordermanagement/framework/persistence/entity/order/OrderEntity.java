@@ -75,7 +75,7 @@ public class OrderEntity extends BaseEntity {
     public Order toDomain() {
 
         return new Order(id, orderUuid, orderState, orderType,
-                deliveryAddress, requestOrder, shopId, userEntity.getUserStringId());
+                deliveryAddress, requestOrder, shopId, userEntity.getUserStringId(), super.getCreatedAt());
     }
 
     public static OrderEntity from(OrderForCreate orderForCreate) {
@@ -92,8 +92,7 @@ public class OrderEntity extends BaseEntity {
     }
 
     public void updateState(OrderForUpdate orderForUpdate) {
-
-        this.orderState = orderForUpdate.orderState();
+        orderState = orderForUpdate.orderState();
         super.updateFrom(orderForUpdate.updateUserId());
     }
 

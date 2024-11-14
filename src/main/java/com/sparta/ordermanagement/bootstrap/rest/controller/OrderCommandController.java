@@ -31,8 +31,8 @@ public class OrderCommandController {
 
     // 주문 상태 변경 시 권한 검증은 Spring Security 기능 활성화 후 @PreAuthorize 등을 사용해 추가 예정
     @ResponseStatus(HttpStatus.OK)
-    @PatchMapping("/{order_id}")
-    public String updateOrderState(@PathVariable("order_id") String orderId, @RequestBody OrderUpdateRequest orderUpdateRequest) {
+    @PatchMapping("/{orderUuid}")
+    public String updateOrderState(@PathVariable(value ="orderUuid") String orderId, @RequestBody OrderUpdateRequest orderUpdateRequest) {
 
         OrderForUpdate orderForUpdate = orderUpdateRequest.toDomain(orderId, TEST_CREATED_USER_ID);
         return orderService.updateOrderState(orderForUpdate);

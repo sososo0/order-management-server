@@ -47,6 +47,7 @@ public class OrderPersistenceAdapter implements OrderOutputPort {
                 .or(Optional::empty);
     }
 
+    @Transactional
     @Override
     public String updateOrderState(OrderForUpdate orderForUpdate) {
         OrderEntity orderEntity = orderRepository.findByOrderUuid(orderForUpdate.orderId()).get();
@@ -55,6 +56,7 @@ public class OrderPersistenceAdapter implements OrderOutputPort {
         return orderEntity.getOrderUuid();
     }
 
+    @Transactional
     @Override
     public String cancelOrder(Order order) {
         OrderEntity orderEntity = orderRepository.findByOrderUuid(order.getOrderUuid()).get();

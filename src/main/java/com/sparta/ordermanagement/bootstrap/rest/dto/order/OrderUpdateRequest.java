@@ -1,18 +1,23 @@
 package com.sparta.ordermanagement.bootstrap.rest.dto.order;
 
 import com.sparta.ordermanagement.application.domain.order.OrderForUpdate;
-import com.sparta.ordermanagement.framework.persistence.entity.order.OrderState;
-import jakarta.validation.constraints.NotBlank;
+import com.sparta.ordermanagement.application.domain.order.OrderState;
+import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.ToString;
 
+@ToString
+@AllArgsConstructor
 public class OrderUpdateRequest {
 
-    @NotBlank
+    @NotNull
+    String orderState;
+
+    @NotNull
     String userId;
 
-    @NotBlank
-    OrderState orderState;
-
     public OrderForUpdate toDomain(String orderId, String updateUserId) {
-        return new OrderForUpdate(orderId, userId, orderState, updateUserId);
+        OrderState updatedState = OrderState.valueOfOrThrow(this.orderState);
+        return new OrderForUpdate(updatedState, userId, orderId, updateUserId);
     }
 }

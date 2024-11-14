@@ -1,7 +1,7 @@
 package com.sparta.ordermanagement.bootstrap.rest.dto.order;
 
 import com.sparta.ordermanagement.application.domain.order.OrderForCreate;
-import com.sparta.ordermanagement.framework.persistence.entity.order.OrderState;
+import com.sparta.ordermanagement.application.domain.order.OrderState;
 import com.sparta.ordermanagement.framework.persistence.entity.order.OrderType;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
