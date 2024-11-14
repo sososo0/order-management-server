@@ -1,7 +1,7 @@
 package com.sparta.ordermanagement.application.domain.order;
 
-import com.sparta.ordermanagement.framework.persistence.entity.order.OrderState;
 import com.sparta.ordermanagement.framework.persistence.entity.order.OrderType;
+import java.time.LocalDateTime;
 
 public class Order {
 
@@ -13,10 +13,11 @@ public class Order {
     private OrderType orderType;
     private String deliveryAddress;
     private String requestOrder;
+    private LocalDateTime createdAt;
 
     public Order(Long id, String orderUuid, OrderState orderState,
                  OrderType orderType, String deliveryAddress, String requestOrder,
-                 String shopId, String userId) {
+                 String shopId, String userId, LocalDateTime createdAt) {
 
         this.id = id;
         this.orderUuid = orderUuid;
@@ -26,6 +27,7 @@ public class Order {
         this.requestOrder = requestOrder;
         this.shopId = shopId;
         this.userId = userId;
+        this.createdAt = createdAt;
     }
 
     public Long getId() {
@@ -58,4 +60,7 @@ public class Order {
         return userId;
     }
 
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
 }

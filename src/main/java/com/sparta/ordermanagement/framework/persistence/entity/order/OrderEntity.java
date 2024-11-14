@@ -2,6 +2,8 @@ package com.sparta.ordermanagement.framework.persistence.entity.order;
 
 import com.sparta.ordermanagement.application.domain.order.Order;
 import com.sparta.ordermanagement.application.domain.order.OrderForCreate;
+import com.sparta.ordermanagement.application.domain.order.OrderForUpdate;
+import com.sparta.ordermanagement.application.domain.order.OrderState;
 import com.sparta.ordermanagement.framework.persistence.entity.BaseEntity;
 import com.sparta.ordermanagement.framework.persistence.entity.orderproduct.OrderProductEntity;
 import com.sparta.ordermanagement.framework.persistence.entity.user.UserEntity;
@@ -73,7 +75,7 @@ public class OrderEntity extends BaseEntity {
     public Order toDomain() {
 
         return new Order(id, orderUuid, orderState, orderType,
-                deliveryAddress, requestOrder, shopId, userEntity.getUserStringId());
+                deliveryAddress, requestOrder, shopId, userEntity.getUserStringId(), super.getCreatedAt());
     }
 
     public static OrderEntity from(OrderForCreate orderForCreate) {
@@ -87,5 +89,17 @@ public class OrderEntity extends BaseEntity {
                 orderForCreate.requestOrder(),
                 orderForCreate.shopId(),
                 createdUser);
+    }
+
+    public void updateState(OrderForUpdate orderForUpdate) {
+        orderState = orderForUpdate.orderState();
+        super.updateFrom(orderForUpdate.updateUserId());
+    }
+
+    public void cancelOrder() {
+
+        this.orderState = OrderState.CANCELED;
+        /* 업데이트 유저 바꾸는 건 유저 검증 만들어지면 추가*/
+        //super.updateFrom();
     }
 }
