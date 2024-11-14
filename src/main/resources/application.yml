@@ -1,22 +1,3 @@
-server:
-  port: 8080
-
 spring:
-  datasource:
-    driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/db  # 데이터베이스 이름을 실제 값으로 대체하세요.
-    username: postgres
-    password: sky2002369
-  jpa:
-    open-in-view: false
-    hibernate:
-      ddl-auto: create  # 개발 중에는 'create', 배포 시 'update' 또는 'validate'를 사용하는 것이 좋습니다.
-    properties:
-      hibernate:
-        show_sql: true
-        format_sql: true
-        dialect: org.hibernate.dialect.PostgreSQLDialect
-
-jwt:
-  secret:
-    key: eW91cl9hY2Nlc3Nfc2VjcmV0X2tleV9leGFtcGxlXzEyMyFAIw==
+  profiles:
+    default: dev
