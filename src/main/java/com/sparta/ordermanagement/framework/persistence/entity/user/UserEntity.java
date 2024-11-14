@@ -1,7 +1,6 @@
 package com.sparta.ordermanagement.framework.persistence.entity.user;
 
 import com.sparta.ordermanagement.application.domain.user.User;
-import com.sparta.ordermanagement.application.domain.user.UserForSignup;
 import com.sparta.ordermanagement.framework.persistence.entity.BaseEntity;
 import com.sparta.ordermanagement.framework.persistence.entity.region.RegionEntity;
 import jakarta.persistence.*;
@@ -32,6 +31,14 @@ public class UserEntity extends BaseEntity {
     @JoinColumn(name = "region_id")
     @ManyToOne(fetch = FetchType.LAZY)
     private RegionEntity regionEntity;
+
+    private UserEntity(String userId) {
+        this.userStringId = userId;
+    }
+
+    public static UserEntity valueOf(String userId) {
+        return new UserEntity(userId);
+    }
 
     public UserEntity(Long id, String userStringId, String password, Role role, RegionEntity regionEntity) {
         super(userStringId, userStringId);

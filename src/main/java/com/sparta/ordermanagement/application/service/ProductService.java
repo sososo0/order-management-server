@@ -45,7 +45,7 @@ public class ProductService {
         return productOutputPort.deleteProduct(productForDelete);
     }
 
-    private Product validateProductUuidAndGetProduct(String productUuid) {
+    public Product validateProductUuidAndGetProduct(String productUuid) {
         return productOutputPort.findByProductUuid(productUuid)
             .orElseThrow(() -> new ProductUuidInvalidException(productUuid));
     }

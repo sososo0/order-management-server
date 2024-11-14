@@ -49,16 +49,15 @@ public class ProductEntity extends BaseEntity {
         String productDescription,
         ProductState productState,
         ShopEntity shopEntity,
-        String createUserUuid
+        String createUserId
     ) {
-        super(createUserUuid, createUserUuid);
+        super(createUserId, createUserId);
         this.productName = productName;
         this.productPrice = productPrice;
         this.productDescription = productDescription;
         this.productState = productState;
         this.shopEntity = shopEntity;
     }
-
 
     @PrePersist
     private void prePersistence() {
@@ -75,7 +74,7 @@ public class ProductEntity extends BaseEntity {
             productForCreate.productDescription(),
             productForCreate.productState(),
             shopEntity,
-            productForCreate.userUuid()
+            productForCreate.userId()
         );
     }
 
@@ -94,11 +93,19 @@ public class ProductEntity extends BaseEntity {
 
     public void updateProductState(ProductStateForUpdate productStateForUpdate) {
         productState = productStateForUpdate.productState();
-        super.updateFrom(productStateForUpdate.userUuid());
+        super.updateFrom(productStateForUpdate.userId());
     }
 
     public void deleteProduct(ProductForDelete productForDelete) {
-        super.delete(productForDelete.deleteRequest());
-        super.deleteFrom(productForDelete.userUuid());
+        super.deleteFrom(productForDelete.userId());
     }
+
+    private ProductEntity(String productUuid) {
+        this.productUuid = productUuid;
+    }
+
+    public static ProductEntity valueOf(String productId) {
+        return new ProductEntity(productId);
+    }
+
 }

@@ -16,15 +16,13 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class ShopQueryRepository {
 
-    private static final String KEYWORD_FORMAT = "%%%s%%";
     private static final Long DEFAULT_SHOP_ID = 0L;
     private static final double DEFAULT_RATING = 5.0;
 
     private final JPAQueryFactory jpaQueryFactory;
 
-    public List<ShopEntity> findAllByKeyword(String requestKeyword, Cursor cursor) {
+    public List<ShopEntity> findAllByKeyword(String keyword, Cursor cursor) {
 
-        String keyword = String.format(KEYWORD_FORMAT, requestKeyword);
         Long basedShopId = getBasedShopId(cursor);
 
         if(cursor.isDefaultSort()) {
@@ -57,8 +55,8 @@ public class ShopQueryRepository {
             .innerJoin(shopCategoryEntity)
             .on(shopCategoryEntity.id.eq(shopEntity.shopCategoryEntity.id))
             .where(shopNameLikeCondition(keyword).and(shopEntity.id.gt(basedShopId)))
-            .limit(size)
             .orderBy(shopEntity.id.asc(), shopEntity.createdAt.asc())
+            .limit(size)
             .fetch();
     }
 
@@ -96,6 +94,6 @@ public class ShopQueryRepository {
     }
 
     private BooleanExpression shopNameLikeCondition(String keyword) {
-        return shopEntity.shopName.like(keyword);
+        return shopEntity.shopName.containsIgnoreCase(keyword);
     }
 }
