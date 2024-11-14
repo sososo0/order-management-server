@@ -2,8 +2,10 @@ package com.sparta.ordermanagement.bootstrap.rest.controller;
 
 import com.sparta.ordermanagement.application.domain.order.OrderForCreate;
 import com.sparta.ordermanagement.application.domain.order.OrderForUpdate;
+import com.sparta.ordermanagement.application.domain.order.OrderPayment;
 import com.sparta.ordermanagement.application.service.OrderService;
 import com.sparta.ordermanagement.bootstrap.rest.dto.order.OrderCreateRequest;
+import com.sparta.ordermanagement.bootstrap.rest.dto.order.OrderDetailResponse;
 import com.sparta.ordermanagement.bootstrap.rest.dto.order.OrderUpdateRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,10 +25,12 @@ public class OrderCommandController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public String createOrder(@RequestBody OrderCreateRequest orderCreateRequest) {
-
+    public OrderDetailResponse createOrder(@RequestBody OrderCreateRequest orderCreateRequest) {
+        /* 반환 타입 수정*/
         OrderForCreate orderForCreate = orderCreateRequest.toDomain(TEST_CREATED_USER_ID);
-        return orderService.createOrder(orderForCreate);
+        OrderPayment orderPayment =  orderService.createOrder(orderForCreate);
+
+        return OrderDetailResponse.from(orderPayment);
     }
 
     // 주문 상태 변경 시 권한 검증은 Spring Security 기능 활성화 후 @PreAuthorize 등을 사용해 추가 예정

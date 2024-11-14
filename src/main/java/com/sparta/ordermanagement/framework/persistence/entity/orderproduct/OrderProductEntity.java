@@ -45,8 +45,6 @@ public class OrderProductEntity extends BaseEntity {
 
     public static OrderProductEntity from(OrderForCreate orderForCreate, OrderEntity orderEntity, ProductEntity productEntity) {
 
-//        ProductEntity productEntity = ProductEntity.valueOf(orderForCreate.productId());
-
         return new OrderProductEntity(
                 orderEntity,
                 productEntity,

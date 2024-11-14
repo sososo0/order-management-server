@@ -1,9 +1,6 @@
 package com.sparta.ordermanagement.application.service;
 
-import com.sparta.ordermanagement.application.domain.order.Order;
-import com.sparta.ordermanagement.application.domain.order.OrderForCreate;
-import com.sparta.ordermanagement.application.domain.order.OrderForUpdate;
-import com.sparta.ordermanagement.application.domain.order.OrderState;
+import com.sparta.ordermanagement.application.domain.order.*;
 import com.sparta.ordermanagement.application.exception.order.InvalidOrderException;
 import com.sparta.ordermanagement.application.exception.order.OrderCancellationTimeExceededException;
 import com.sparta.ordermanagement.application.exception.order.OrderStateChangedException;
@@ -23,9 +20,11 @@ public class OrderService {
     private final OrderOutputPort orderOutPutPort;
     private final ShopService shopService;
     private final ProductService productService;
+    private final PaymentService paymentService;
 
-    /* User, Product 기능 통합 후 각 id 검증 메서드 추가 필요*/
-    public String createOrder(OrderForCreate orderForCreate) {
+    /* User, Product 기능 통합 후 각 id 검증 메서드 추가 필요
+    * Return 타입 변경해서 orderId, paymentId를 같이 반환하도록 수정*/
+    public OrderPayment createOrder(OrderForCreate orderForCreate) {
         /* User ID 기반 검증은 User 기능과 통합 후 사용 - 현재는 생략*/
         /* 유저 권한에 따라 ON/OFF 상태 확인하는 검증 메서드 추가 필요*/
 
@@ -34,7 +33,14 @@ public class OrderService {
         // OrderService가 ShopService를 의존성 주입하지 않고도 검증할 수 있도록 리팩토링 필요
         shopService.validateShopIdAndGetShop(orderForCreate.shopId());
 
-        return orderOutPutPort.saveOrder(orderForCreate).getOrderUuid();
+        /*saverOrder 시 바로 Controller 단으로 return 하지 않고 여기로 가져오는데 payment 생성에
+        * 필요한 데이터를 Domain 형태로 가져오면 거기서 paymentForCreate 도메인으로 변경해줘서
+        * Payment를 생성하는데 필요한 데이터를 넘겨주는 방식 사용
+        * orderId와 paymentId를 같이 return 하도록 수정*/
+        String orderId = orderOutPutPort.saveOrder(orderForCreate);
+        String paymentId = paymentService.createPayment(orderId);
+
+        return new OrderPayment(orderId, paymentId);
     }
 
     /* 업데이트 기능

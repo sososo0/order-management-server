@@ -7,7 +7,7 @@ import java.util.Optional;
 
 public interface OrderOutputPort {
 
-    Order saveOrder(OrderForCreate orderForCreate);
+    String saveOrder(OrderForCreate orderForCreate);
 
     Optional<Order> findByOrderId(String orderId);
 

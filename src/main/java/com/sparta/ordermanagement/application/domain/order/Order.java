@@ -1,6 +1,7 @@
 package com.sparta.ordermanagement.application.domain.order;
 
 import com.sparta.ordermanagement.framework.persistence.entity.order.OrderType;
+
 import java.time.LocalDateTime;
 
 public class Order {

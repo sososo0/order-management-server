@@ -38,7 +38,7 @@ public class OrderPersistenceAdapter implements OrderOutputPort {
 
     @Transactional
     @Override
-    public Order saveOrder(OrderForCreate orderForCreate) {
+    public String saveOrder(OrderForCreate orderForCreate) {
 
         OrderEntity orderEntity = orderRepository.save(OrderEntity.from(orderForCreate));
 
@@ -48,7 +48,7 @@ public class OrderPersistenceAdapter implements OrderOutputPort {
         OrderProductEntity orderProductEntity = OrderProductEntity.from(orderForCreate, orderEntity, productEntity);
         orderProductRepository.save(orderProductEntity);
 
-        return orderEntity.toDomain();
+        return orderEntity.getOrderUuid();
     }
 
     @Override

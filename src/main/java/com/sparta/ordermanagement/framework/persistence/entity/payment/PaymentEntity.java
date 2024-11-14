@@ -1,5 +1,6 @@
 package com.sparta.ordermanagement.framework.persistence.entity.payment;
 
+import com.sparta.ordermanagement.application.domain.payment.PaymentState;
 import com.sparta.ordermanagement.framework.persistence.entity.BaseEntity;
 import com.sparta.ordermanagement.framework.persistence.entity.order.OrderEntity;
 import jakarta.persistence.*;
@@ -23,14 +24,14 @@ public class PaymentEntity extends BaseEntity {
     @Column(unique = true, name = "payment_uuid")
     private String paymentUuid;
 
-    @Column(nullable = false, columnDefinition = "INTEGER")
+    @Column(columnDefinition = "INTEGER")
     private int amount;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, columnDefinition = "varchar(255)")
     private PaymentState paymentState;
 
-    @Column(nullable = false, columnDefinition = "varchar(255)")
+    @Column(columnDefinition = "varchar(255)")
     private String pgProvider;
 
     @JoinColumn(nullable = false)
@@ -47,9 +48,17 @@ public class PaymentEntity extends BaseEntity {
         this.orderEntity = orderEntity;
     }
 
+    public static PaymentEntity from(OrderEntity orderEntity) {
+
+        return new PaymentEntity(
+                0,
+                PaymentState.PENDING,
+                null,
+                orderEntity);
+    }
+
     @PrePersist
     private void prePersistence() {
         paymentUuid = UUID.randomUUID().toString();
     }
-
 }
