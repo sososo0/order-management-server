@@ -1,7 +1,6 @@
 package com.sparta.ordermanagement.application.domain.payment;
 
 import com.sparta.ordermanagement.application.domain.order.Order;
-import com.sparta.ordermanagement.framework.persistence.entity.payment.PaymentState;
 import com.sparta.ordermanagement.framework.persistence.entity.payment.PaymentType;
 
 public class Payment {
