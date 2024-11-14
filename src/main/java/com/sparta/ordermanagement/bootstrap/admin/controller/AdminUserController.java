@@ -6,6 +6,7 @@ import com.sparta.ordermanagement.bootstrap.admin.dto.UserAdminSignupRequest;
 import com.sparta.ordermanagement.bootstrap.admin.dto.UserGetResponse;
 import com.sparta.ordermanagement.bootstrap.auth.UserDetailsImpl;
 import com.sparta.ordermanagement.bootstrap.rest.exception.exceptions.InvalidAuthorizationException;
+import com.sparta.ordermanagement.framework.persistence.entity.user.Role;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.security.sasl.AuthenticationException;
 import java.util.List;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController
@@ -26,7 +28,10 @@ public class AdminUserController {
 
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
-    public String createAdmin(@RequestBody UserAdminSignupRequest userAdminSignupRequest, BindingResult bindingResult, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public String createAdmin(
+            @RequestBody UserAdminSignupRequest userAdminSignupRequest, BindingResult bindingResult,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
 
         log.info("[AdminUserController] /admin/v1/users call");
 
@@ -56,9 +61,23 @@ public class AdminUserController {
 
         log.info("[AdminUserController]-[getUsers] /admin/v1/users call");
 
-
         return adminUserService.getUsers().stream()
                 .map(UserGetResponse::from)
                 .toList();
     }
+
+    @PatchMapping("/{user_string_id}/{role}")
+    @ResponseStatus(HttpStatus.OK)
+    public Map.Entry updateUser(
+            @PathVariable("user_string_id") String userStringId,
+            @PathVariable("role") Role role,
+            @AuthenticationPrincipal UserDetailsImpl userDetails){
+
+        log.info("[AdminUserController]-[updateUser] /admin/v1/users/{user_string_id} call");
+        Integer updatedUserId = adminUserService.updateUser(userStringId, role);
+
+        return Map.entry("userId", updatedUserId);
+
+    }
+
 }

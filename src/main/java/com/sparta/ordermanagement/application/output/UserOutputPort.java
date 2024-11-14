@@ -2,6 +2,7 @@ package com.sparta.ordermanagement.application.output;
 
 
 import com.sparta.ordermanagement.application.domain.user.User;
+import com.sparta.ordermanagement.framework.persistence.entity.user.Role;
 import com.sparta.ordermanagement.framework.persistence.entity.user.UserEntity;
 
 import java.util.List;
@@ -13,4 +14,5 @@ public interface UserOutputPort {
     Boolean existsByUserStringId(String userStringId);
     String saveUser(User user, String encodedPassword);
     List<User> findAll();
+    Integer updateUserById(String userStringId, Role role);
 }
