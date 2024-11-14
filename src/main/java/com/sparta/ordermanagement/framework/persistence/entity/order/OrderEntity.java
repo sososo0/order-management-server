@@ -3,6 +3,7 @@ package com.sparta.ordermanagement.framework.persistence.entity.order;
 import com.sparta.ordermanagement.application.domain.order.Order;
 import com.sparta.ordermanagement.application.domain.order.OrderForCreate;
 import com.sparta.ordermanagement.application.domain.order.OrderForUpdate;
+import com.sparta.ordermanagement.application.domain.order.OrderState;
 import com.sparta.ordermanagement.framework.persistence.entity.BaseEntity;
 import com.sparta.ordermanagement.framework.persistence.entity.orderproduct.OrderProductEntity;
 import com.sparta.ordermanagement.framework.persistence.entity.user.UserEntity;
