@@ -4,8 +4,10 @@ import com.sparta.ordermanagement.application.domain.shop.Shop;
 import com.sparta.ordermanagement.application.domain.shop.ShopCategory;
 import com.sparta.ordermanagement.application.admin.vo.ShopForCreate;
 import com.sparta.ordermanagement.application.domain.shop.ShopForUpdate;
+import com.sparta.ordermanagement.application.domain.user.User;
 import com.sparta.ordermanagement.bootstrap.admin.dto.ShopUpdateRequest;
 import com.sparta.ordermanagement.framework.persistence.entity.BaseEntity;
+import com.sparta.ordermanagement.framework.persistence.entity.user.UserEntity;
 import jakarta.persistence.*;
 import java.util.Objects;
 import java.util.UUID;
@@ -27,8 +29,9 @@ public class ShopEntity extends BaseEntity {
     @Column(unique = true, name = "uuid")
     private String shopUuid;
 
-    @Column(nullable = false, columnDefinition = "varchar(255)")
-    private String userId;
+    @JoinColumn(nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    private UserEntity userEntity;
 
     @Column(nullable = false, columnDefinition = "varchar(255)")
     private String shopName;
@@ -41,11 +44,11 @@ public class ShopEntity extends BaseEntity {
     private ShopCategoryEntity shopCategoryEntity;
 
     private ShopEntity(
-        String userId, String shopName,
+        UserEntity userEntity, String shopName,
         ShopCategoryEntity shopCategoryEntity, String createdUserId) {
 
         super(createdUserId, createdUserId);
-        this.userId = userId;
+        this.userEntity = userEntity;
         this.shopName = shopName;
         this.rating = 0.0;
         this.shopCategoryEntity = shopCategoryEntity;
@@ -63,12 +66,12 @@ public class ShopEntity extends BaseEntity {
         return new Shop(id, shopUuid, shopCategory, shopName, rating);
     }
 
-    public static ShopEntity from(ShopForCreate shopForCreate) {
+    public static ShopEntity from(ShopForCreate shopForCreate, User user) {
         ShopCategoryEntity shopCategoryEntity =
             ShopCategoryEntity.generateWithoutName(shopForCreate.shopCategoryId());
 
         return new ShopEntity(
-            shopForCreate.ownerUserId(),
+            UserEntity.from(user),
             shopForCreate.shopName(),
             shopCategoryEntity,
             shopForCreate.createdUserId());
@@ -87,13 +90,13 @@ public class ShopEntity extends BaseEntity {
         return Objects.equals(shopCategoryEntity.getId(), categoryId);
     }
 
-    public void updateFrom(ShopUpdateRequest shopUpdateRequest, String updateUserId) {
+    public void updateFrom(ShopUpdateRequest shopUpdateRequest, User owner, String updateUserId) {
         if (!isSameShopCategory(shopUpdateRequest.getShopCategoryId())) {
             shopCategoryEntity = ShopCategoryEntity.generateWithoutName(
                 shopUpdateRequest.getShopCategoryId());
         }
         shopName = shopUpdateRequest.getShopName();
-        userId = shopUpdateRequest.getOwnerUserId();
+        userEntity = UserEntity.from(owner);
         super.updateFrom(updateUserId);
     }
 

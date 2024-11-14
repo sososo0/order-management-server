@@ -3,6 +3,7 @@ package com.sparta.ordermanagement.framework.persistence.adapter;
 import com.sparta.ordermanagement.application.domain.shop.Shop;
 import com.sparta.ordermanagement.application.admin.vo.ShopForCreate;
 import com.sparta.ordermanagement.application.domain.shop.ShopForUpdate;
+import com.sparta.ordermanagement.application.domain.user.User;
 import com.sparta.ordermanagement.application.output.ShopOutputPort;
 import com.sparta.ordermanagement.framework.persistence.entity.shop.ShopEntity;
 import com.sparta.ordermanagement.framework.persistence.repository.ShopQueryRepository;
@@ -52,8 +53,8 @@ public class ShopPersistenceAdapter implements ShopOutputPort {
     }
 
     @Override
-    public String saveShop(ShopForCreate shopForCreate) {
-        return shopRepository.save(ShopEntity.from(shopForCreate)).getShopUuid();
+    public String saveShop(ShopForCreate shopForCreate, User owner) {
+        return shopRepository.save(ShopEntity.from(shopForCreate, owner)).getShopUuid();
     }
 
     @Transactional
