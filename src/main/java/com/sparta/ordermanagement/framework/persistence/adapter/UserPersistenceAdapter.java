@@ -23,7 +23,7 @@ public class UserPersistenceAdapter implements UserOutputPort {
     }
 
     public Optional<UserEntity> findByUserId(String userId) {
-        return userRepository.findByUserId(userId)
+        return userRepository.findByUserStringId(userId)
                 .or(Optional::empty);
     }
 
