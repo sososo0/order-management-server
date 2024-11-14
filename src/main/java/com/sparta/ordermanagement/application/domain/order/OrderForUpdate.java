@@ -1,11 +1,7 @@
 package com.sparta.ordermanagement.application.domain.order;
 
-import com.sparta.ordermanagement.framework.persistence.entity.order.OrderState;
-
-public record OrderForUpdate(String orderId,
+public record OrderForUpdate(OrderState orderState,
                              String userId,
-                             OrderState orderState,
-                             String deliveryAddress,
-                             String requestOrder,
+                             String orderId,
                              String updateUserId) {
 }

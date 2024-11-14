@@ -1,6 +1,5 @@
 package com.sparta.ordermanagement.application.domain.order;
 
-import com.sparta.ordermanagement.framework.persistence.entity.order.OrderState;
 import com.sparta.ordermanagement.framework.persistence.entity.order.OrderType;
 
 public record OrderForCreate(String userId,
