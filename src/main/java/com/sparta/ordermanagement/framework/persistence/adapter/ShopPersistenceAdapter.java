@@ -52,11 +52,6 @@ public class ShopPersistenceAdapter implements ShopOutputPort {
             .map(ShopEntity::toDomain);
     }
 
-    @Override
-    public String saveShop(ShopForCreate shopForCreate, User owner) {
-        return shopRepository.save(ShopEntity.from(shopForCreate, owner)).getShopUuid();
-    }
-
     @Transactional
     @Override
     public String updateShop(ShopForUpdate shopForUpdate) {

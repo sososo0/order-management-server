@@ -66,12 +66,12 @@ public class ShopEntity extends BaseEntity {
         return new Shop(id, shopUuid, shopCategory, shopName, rating);
     }
 
-    public static ShopEntity from(ShopForCreate shopForCreate, User user) {
+    public static ShopEntity from(ShopForCreate shopForCreate, UserEntity userEntity) {
         ShopCategoryEntity shopCategoryEntity =
             ShopCategoryEntity.generateWithoutName(shopForCreate.shopCategoryId());
 
         return new ShopEntity(
-            UserEntity.from(user),
+            userEntity,
             shopForCreate.shopName(),
             shopCategoryEntity,
             shopForCreate.createdUserId());
@@ -90,13 +90,13 @@ public class ShopEntity extends BaseEntity {
         return Objects.equals(shopCategoryEntity.getId(), categoryId);
     }
 
-    public void updateFrom(ShopUpdateRequest shopUpdateRequest, User owner, String updateUserId) {
+    public void updateFrom(ShopUpdateRequest shopUpdateRequest, UserEntity owner, String updateUserId) {
         if (!isSameShopCategory(shopUpdateRequest.getShopCategoryId())) {
             shopCategoryEntity = ShopCategoryEntity.generateWithoutName(
                 shopUpdateRequest.getShopCategoryId());
         }
         shopName = shopUpdateRequest.getShopName();
-        userEntity = UserEntity.from(owner);
+        userEntity = owner;
         super.updateFrom(updateUserId);
     }
 
