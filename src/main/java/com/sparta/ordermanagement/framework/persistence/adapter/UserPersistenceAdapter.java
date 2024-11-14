@@ -7,6 +7,7 @@ import com.sparta.ordermanagement.framework.persistence.repository.UserRepositor
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -37,5 +38,12 @@ public class UserPersistenceAdapter implements UserOutputPort {
         UserEntity userEntity = UserEntity.from(user, encodedPassword);
 
         return userRepository.save(userEntity).getUserStringId();
+    }
+
+    @Override
+    public List<User> findAll() {
+        return userRepository.findAll().stream()
+                .map(UserEntity::toDomain)
+                .toList();
     }
 }

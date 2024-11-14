@@ -10,6 +10,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class AdminUserService {
@@ -35,5 +37,10 @@ public class AdminUserService {
 
         return userOutputPort.saveUser(user, encodedPassword);
 
+    }
+
+    public List<User> getUsers() {
+
+        return userOutputPort.findAll();
     }
 }
