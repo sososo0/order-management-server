@@ -73,7 +73,7 @@ public class OrderEntity extends BaseEntity {
     public Order toDomain() {
 
         return new Order(id, orderUuid, orderState, orderType,
-                deliveryAddress, requestOrder, shopId, userEntity.getUserId());
+                deliveryAddress, requestOrder, shopId, userEntity.getUserStringId());
     }
 
     public static OrderEntity from(OrderForCreate orderForCreate) {
