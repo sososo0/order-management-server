@@ -39,8 +39,8 @@ public class ShopQueryRepository {
             .from(shopEntity)
             .where(shopEntity.shopUuid.eq(cursor.basedUuid()))
             .fetchOne())
-            .orElseThrow(IllegalArgumentException::new)
-            .getId();
+            .map(ShopEntity::getId)
+            .orElse(DEFAULT_SHOP_ID);
     }
 
     /*

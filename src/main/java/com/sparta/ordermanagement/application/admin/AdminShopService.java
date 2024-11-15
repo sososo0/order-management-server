@@ -1,11 +1,15 @@
 package com.sparta.ordermanagement.application.admin;
 
 import com.sparta.ordermanagement.application.admin.vo.ShopForCreate;
+import com.sparta.ordermanagement.application.exception.InvalidValueException;
 import com.sparta.ordermanagement.application.exception.shop.ShopIdInvalidException;
+import com.sparta.ordermanagement.application.service.UserService;
 import com.sparta.ordermanagement.bootstrap.admin.dto.ShopUpdateRequest;
 import com.sparta.ordermanagement.framework.admin.repository.AdminShopRepository;
 import com.sparta.ordermanagement.framework.persistence.entity.shop.ShopCategoryEntity;
 import com.sparta.ordermanagement.framework.persistence.entity.shop.ShopEntity;
+import com.sparta.ordermanagement.framework.persistence.entity.user.UserEntity;
+import com.sparta.ordermanagement.framework.persistence.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -20,6 +24,8 @@ public class AdminShopService {
 
     private final AdminShopRepository adminShopRepository;
     private final AdminShopCategoryService shopCategoryService;
+    private final UserService userService;
+    private final UserRepository userRepository;
 
     public Page<ShopEntity> findAll(Pageable pageable) {
 
@@ -42,7 +48,11 @@ public class AdminShopService {
     public String createShop(ShopForCreate shopForCreate) {
 
         shopCategoryService.validateShopCategoryId(shopForCreate.shopCategoryId());
-        ShopEntity shopEntity = ShopEntity.from(shopForCreate);
+        UserEntity userEntity =
+            userRepository.findByUserStringId(shopForCreate.ownerUserId())
+                .orElseThrow(() -> new InvalidValueException("회원 없음"));
+
+        ShopEntity shopEntity = ShopEntity.from(shopForCreate, userEntity);
 
         return adminShopRepository.save(shopEntity).getShopUuid();
     }
@@ -56,7 +66,10 @@ public class AdminShopService {
         ShopEntity shopEntity = adminShopRepository.findByShopUuid(updatedShopUuid)
             .orElseThrow(() -> new ShopIdInvalidException(updatedShopUuid));
 
-        shopEntity.updateFrom(shopUpdateRequest, updatedUserUuid);
+        UserEntity owner = userRepository.findByUserStringId(
+            shopUpdateRequest.getOwnerUserId()).orElseThrow(() -> new InvalidValueException("회원 없음"));
+
+        shopEntity.updateFrom(shopUpdateRequest, owner, updatedUserUuid);
         return shopEntity.getShopUuid();
     }
 
