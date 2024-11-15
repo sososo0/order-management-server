@@ -17,6 +17,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -32,23 +33,34 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     private final JwtUtil jwtUtil;
 
     private static final Set<String> FILTERING_URIS_ADMIN = Set.of(
-            "/admin/v1"
+            "/admin"
     );
 
-    private static final Set<String> NO_FILTERING_URIS = Set.of(
-            "/api/v1/users/signin",
-            "/api/v1/users/signup"
+    //필터링할 url 추가하시면 됩니다. (user 정보가 필요하거나 권한이 필요한 url)
+    private static final Set<String> FILTERING_URIS = Set.of(
+            "/api/v1/example",
+            "/api/v1/example2"
     );
 
 
     public static boolean isFilteringUri(String uri) {
-        // 필터가 필요 없는 URI는 제외
-        if (NO_FILTERING_URIS.contains(uri)) {
-            return false;
+        // true -> 필터링 함(user 정보 필요한 url)
+        // false-> 필터링 안함
+
+        // 필터가 필요한 URI 검증
+        if (FILTERING_URIS.contains(uri)) {
+            return true;
         }
-        // 필터링이 필요한 admin URI 또는 /shops/{숫자} 패턴 확인
-        return FILTERING_URIS_ADMIN.stream().anyMatch(uri::startsWith);
+
+        // 모든 admin url 에 필터 적용
+        if (FILTERING_URIS_ADMIN.stream()
+                .anyMatch(uri::startsWith)){
+            return true;
+        }
+
+        return false;
     }
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 

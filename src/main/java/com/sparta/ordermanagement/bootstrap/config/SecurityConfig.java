@@ -36,7 +36,8 @@ public class SecurityConfig {
         http.authorizeHttpRequests((authorizeHttpRequests) ->
                 authorizeHttpRequests
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll() // resources 접근 허용 설정
-                        .anyRequest().permitAll() // 모든 요청 인증처리 -> JWT Filter 에서 url 필터링함.
+                       // .requestMatchers("api/users/*", "api/products/*").authenticated()
+                        .anyRequest().permitAll()// 모든 요청 인증처리 -> JWT Filter 에서 url 필터링함.
         );
 
 
