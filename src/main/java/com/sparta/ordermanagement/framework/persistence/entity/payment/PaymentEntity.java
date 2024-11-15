@@ -1,5 +1,7 @@
 package com.sparta.ordermanagement.framework.persistence.entity.payment;
 
+import com.sparta.ordermanagement.application.domain.payment.Payment;
+import com.sparta.ordermanagement.application.domain.payment.PaymentForUpdate;
 import com.sparta.ordermanagement.application.domain.payment.PaymentState;
 import com.sparta.ordermanagement.framework.persistence.entity.BaseEntity;
 import com.sparta.ordermanagement.framework.persistence.entity.order.OrderEntity;
@@ -60,5 +62,17 @@ public class PaymentEntity extends BaseEntity {
     @PrePersist
     private void prePersistence() {
         paymentUuid = UUID.randomUUID().toString();
+    }
+
+    public void processPayment(PaymentForUpdate paymentForUpdate, int amount) {
+        this.amount = amount;
+        paymentState = PaymentState.COMPLETED;
+        pgProvider = paymentForUpdate.pgProvider();
+        super.updateFrom(paymentForUpdate.updatedUserId());
+    }
+
+    public Payment toDomain() {
+
+        return new Payment(id, orderEntity.getOrderUuid(), paymentUuid, amount, paymentState, pgProvider);
     }
 }

@@ -16,12 +16,8 @@ public class OrderProductService {
 
     private final OrderProductOutputPort orderProductOutputPort;
 
+    public List<OrderProduct> findOrderProductsByOrderId(String orderId) {
 
-    public List<OrderProduct> createOrderProduct(OrderProductForCreate orderProductForCreate, Order order) {
-        return null;
-    }
-
-    private Product validateProductIdAndGet(String productId) {
-        return null;
+        return orderProductOutputPort.findOrderProductsByOrderId(orderId);
     }
 }

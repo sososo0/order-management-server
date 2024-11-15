@@ -6,22 +6,20 @@ import com.sparta.ordermanagement.framework.persistence.entity.payment.PaymentTy
 public class Payment {
 
     private Long id;
-    private Order order;
+    private String orderUuid;
     private String paymentUuid;
     private int amount;
     private PaymentState paymentState;
-    private PaymentType paymentType;
     private String pgProvider;
 
-    public Payment(Long id, Order order, String paymentUuid, int amount,
-                   PaymentState paymentState, PaymentType paymentType, String pgProvider) {
+    public Payment(Long id, String orderUuid, String paymentUuid, int amount,
+                   PaymentState paymentState, String pgProvider) {
 
         this.id = id;
-        this.order = order;
+        this.orderUuid = orderUuid;
         this.paymentUuid = paymentUuid;
         this.amount = amount;
         this.paymentState = paymentState;
-        this.paymentType = paymentType;
         this.pgProvider = pgProvider;
     }
 
@@ -29,8 +27,8 @@ public class Payment {
         return id;
     }
 
-    public Order getOrder() {
-        return order;
+    public String getOrderUuid() {
+        return orderUuid;
     }
 
     public String getPaymentUuid() {
@@ -43,10 +41,6 @@ public class Payment {
 
     public PaymentState getPaymentState() {
         return paymentState;
-    }
-
-    public PaymentType getPaymentType() {
-        return paymentType;
     }
 
     public String getPgProvider() {
