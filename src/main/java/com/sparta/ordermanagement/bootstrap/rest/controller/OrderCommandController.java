@@ -46,8 +46,8 @@ public class OrderCommandController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @PatchMapping("{order_id}/cancel")
-    public String cancelOrder(@PathVariable("order_id") String orderId,
+    @PatchMapping("{orderId}/cancel")
+    public String cancelOrder(@PathVariable("orderId") String orderId,
                               @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
         return orderService.cancelOrder(orderId, userDetails.getUserStringId());

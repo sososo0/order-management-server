@@ -23,7 +23,9 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
+import java.util.Locale;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 
 @RequiredArgsConstructor
@@ -32,15 +34,22 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
 
+    private final static String UUID_PATTERN = "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}";
+
     private static final Set<String> FILTERING_URIS_ADMIN = Set.of(
             "/admin"
     );
 
     //필터링할 url 추가하시면 됩니다. (user 정보가 필요하거나 권한이 필요한 url)
-    private static final Set<String> FILTERING_URIS = Set.of(
-            "/api/v1/example",
-            "/api/v1/example2",
-            "/api/v1/orders"
+    private static final Set<Pattern> FILTERING_URIS = Set.of(
+            Pattern.compile("^/api/v1/example$"),
+            Pattern.compile("^/api/v1/example2$"),
+            Pattern.compile(String.format("^/api/v1/shops/%s/products$", UUID_PATTERN)),
+            Pattern.compile(String.format("^/api/v1/shops/%s/products/%s$", UUID_PATTERN, UUID_PATTERN)),
+            Pattern.compile("^/api/v1/orders$"),
+            Pattern.compile("^/api/v1/orders/payments$"),
+            Pattern.compile(String.format("^/api/v1/orders/%s$", UUID_PATTERN)),
+            Pattern.compile(String.format("^/api/v1/orders/%s/cancel$", UUID_PATTERN))
     );
 
 
@@ -49,7 +58,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         // false-> 필터링 안함
 
         // 필터가 필요한 URI 검증
-        if (FILTERING_URIS.contains(uri)) {
+        if (FILTERING_URIS.stream().anyMatch(pattern -> pattern.matcher(uri).matches())) {
             return true;
         }
 

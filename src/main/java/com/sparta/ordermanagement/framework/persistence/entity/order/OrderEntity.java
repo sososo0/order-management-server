@@ -78,9 +78,7 @@ public class OrderEntity extends BaseEntity {
                 deliveryAddress, requestOrder, shopId, userEntity.getUserStringId(), super.getCreatedAt(), super.isDeleted());
     }
 
-    public static OrderEntity from(OrderForCreate orderForCreate) {
-
-        UserEntity createdUser = UserEntity.valueOf(orderForCreate.userId());
+    public static OrderEntity from(OrderForCreate orderForCreate, UserEntity userEntity) {
 
         return new OrderEntity(
                 orderForCreate.orderState(),
@@ -88,7 +86,7 @@ public class OrderEntity extends BaseEntity {
                 orderForCreate.deliveryAddress(),
                 orderForCreate.requestOrder(),
                 orderForCreate.shopId(),
-                createdUser);
+                userEntity);
     }
 
     public void updateState(OrderForUpdate orderForUpdate) {

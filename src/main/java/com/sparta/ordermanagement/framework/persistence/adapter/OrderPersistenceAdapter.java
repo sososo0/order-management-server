@@ -8,10 +8,13 @@ import com.sparta.ordermanagement.application.output.OrderOutputPort;
 import com.sparta.ordermanagement.framework.persistence.entity.order.OrderEntity;
 import com.sparta.ordermanagement.framework.persistence.entity.orderproduct.OrderProductEntity;
 import com.sparta.ordermanagement.framework.persistence.entity.product.ProductEntity;
+import com.sparta.ordermanagement.framework.persistence.entity.user.UserEntity;
 import com.sparta.ordermanagement.framework.persistence.repository.OrderProductRepository;
 import com.sparta.ordermanagement.framework.persistence.repository.OrderRepository;
 import com.sparta.ordermanagement.framework.persistence.repository.ProductRepository;
 import java.util.Optional;
+
+import com.sparta.ordermanagement.framework.persistence.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +30,7 @@ public class OrderPersistenceAdapter implements OrderOutputPort {
     private final OrderRepository orderRepository;
     private final OrderProductRepository orderProductRepository;
     private final ProductRepository productRepository;
+    private final UserRepository userRepository;
 
     public Optional<Order> findByOrderUuid(String orderUuid) {
         return orderRepository.findByOrderUuid(orderUuid)
@@ -44,7 +48,8 @@ public class OrderPersistenceAdapter implements OrderOutputPort {
     @Override
     public String saveOrder(OrderForCreate orderForCreate) {
 
-        OrderEntity orderEntity = orderRepository.save(OrderEntity.from(orderForCreate));
+        UserEntity userEntity = userRepository.findByUserStringId(orderForCreate.userId()).get();
+        OrderEntity orderEntity = orderRepository.save(OrderEntity.from(orderForCreate, userEntity));
         createOrderWithProducts(orderForCreate, orderEntity);
 
         return orderEntity.getOrderUuid();

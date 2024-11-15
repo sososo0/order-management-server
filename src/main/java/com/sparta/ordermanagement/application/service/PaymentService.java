@@ -1,10 +1,12 @@
 package com.sparta.ordermanagement.application.service;
 
 import com.sparta.ordermanagement.application.domain.order.Order;
+import com.sparta.ordermanagement.application.domain.order.OrderState;
 import com.sparta.ordermanagement.application.domain.orderproduct.OrderProduct;
 import com.sparta.ordermanagement.application.domain.payment.Payment;
 import com.sparta.ordermanagement.application.domain.payment.PaymentForUpdate;
 import com.sparta.ordermanagement.application.exception.order.InvalidOrderException;
+import com.sparta.ordermanagement.application.exception.order.OrderStateChangedException;
 import com.sparta.ordermanagement.application.exception.payment.UserIdInvalidException;
 import com.sparta.ordermanagement.application.exception.payment.UserOrderInvalidException;
 import com.sparta.ordermanagement.application.output.*;
@@ -35,6 +37,7 @@ public class PaymentService {
     public Payment processPayment(PaymentForUpdate paymentForUpdate) {
 
         Order order = OrderUserIdInvalidAndGetOrder(paymentForUpdate.orderUuid(), paymentForUpdate.updatedUserId());
+        validateOrderCheckCanceled(order);
         List<OrderProduct> orderProducts = orderProductService.findOrderProductsByOrderId(paymentForUpdate.orderUuid());
 
         int amount = calculateTotalOrderPrice(orderProducts);
@@ -59,5 +62,11 @@ public class PaymentService {
         return orderProducts.stream()
                 .mapToInt(orderProduct -> orderProduct.getCount() * orderProduct.getOrderPrice())
                 .sum();
+    }
+
+    public void validateOrderCheckCanceled(Order order) {
+        if (order.getOrderState().equals(OrderState.CANCELED)) {
+            throw new OrderStateChangedException(order.getOrderUuid());
+        }
     }
 }

@@ -22,9 +22,6 @@ public class OrderCreateRequest {
 
     /* Order */
     @NotBlank
-    String userId;
-
-    @NotBlank
     String shopId;
 
     @NotBlank
@@ -46,7 +43,7 @@ public class OrderCreateRequest {
                 .map(product -> new OrderProductForCreate(product.getProductId(), product.getCount(), product.getOrderPrice()))
                 .collect(Collectors.toList());
 
-        return new OrderForCreate(userId, shopId, orderState, orderType, deliveryAddress,
+        return new OrderForCreate(createdUserId, shopId, orderState, orderType, deliveryAddress,
                 requestOrder, productList, createdUserId);
     }
 }

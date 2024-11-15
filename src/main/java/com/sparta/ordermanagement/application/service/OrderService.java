@@ -60,6 +60,7 @@ public class OrderService {
 
     public String cancelOrder(String orderId, String userId) {
         Order order = validateOrderIdAndGetOrder(orderId);
+        paymentService.validateOrderCheckCanceled(order);
         validateOrderOwnership(userId, order.getUserId());
 
         LocalDateTime orderTime = order.getCreatedAt();
