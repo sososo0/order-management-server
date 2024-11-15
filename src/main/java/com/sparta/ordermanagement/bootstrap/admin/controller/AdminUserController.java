@@ -55,7 +55,6 @@ public class AdminUserController {
         }
 
         return adminUserService.signup(userAdminSignupRequest.toDomain());
-
     }
 
 
@@ -81,6 +80,19 @@ public class AdminUserController {
         Integer updatedUserId = adminUserService.updateUser(userStringId, role);
 
         return Map.entry("userId", updatedUserId);
-
     }
+
+    @DeleteMapping("/{user_string_id}")
+    @ResponseStatus(HttpStatus.OK)
+    public Map.Entry deleteUser(
+            @PathVariable("user_string_id") String userStringId,
+            @AuthenticationPrincipal UserDetailsImpl userDetails){
+
+        log.info("[AdminUserController]-[deleteUser] /admin/v1/users/{} call", userStringId);
+
+        adminUserService.deleteUser(userStringId);
+
+        return Map.entry("userId", userStringId);
+    }
+
 }

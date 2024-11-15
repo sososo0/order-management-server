@@ -6,6 +6,7 @@ import com.sparta.ordermanagement.application.output.UserOutputPort;
 import com.sparta.ordermanagement.framework.persistence.entity.user.Role;
 import com.sparta.ordermanagement.framework.persistence.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,6 +15,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AdminUserService {
 
     private final PasswordEncoder passwordEncoder;
@@ -49,5 +51,16 @@ public class AdminUserService {
     public Integer updateUser(String userStringId, Role role) {
 
         return userOutputPort.updateUserById(userStringId, role);
+    }
+
+    @Transactional
+    public void deleteUser(String userStringId) {
+
+        int deletedUserCount = userOutputPort.deleteUserByUserStringId(userStringId);
+
+        if(deletedUserCount != 1){
+            throw new InvalidValueException("User does not exist");
+        }
+
     }
 }

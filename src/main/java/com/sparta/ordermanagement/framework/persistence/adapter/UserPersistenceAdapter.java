@@ -2,6 +2,7 @@ package com.sparta.ordermanagement.framework.persistence.adapter;
 
 import com.sparta.ordermanagement.application.domain.user.User;
 import com.sparta.ordermanagement.application.output.UserOutputPort;
+import com.sparta.ordermanagement.application.service.UserService;
 import com.sparta.ordermanagement.framework.persistence.entity.user.Role;
 import com.sparta.ordermanagement.framework.persistence.entity.user.UserEntity;
 import com.sparta.ordermanagement.framework.persistence.repository.UserRepository;
@@ -51,5 +52,10 @@ public class UserPersistenceAdapter implements UserOutputPort {
     @Override
     public Integer updateUserById(String userStringId, Role role) {
         return userRepository.updateByUserStringId(userStringId, role);
+    }
+
+    @Override
+    public int deleteUserByUserStringId(String userStringId) {
+        return userRepository.deleteByUserStringId(userStringId);
     }
 }
