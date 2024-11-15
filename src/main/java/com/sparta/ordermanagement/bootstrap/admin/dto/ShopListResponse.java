@@ -23,7 +23,7 @@ public class ShopListResponse {
         return new ShopListResponse(
             shopEntity.getId(),
             shopEntity.getShopUuid(),
-            shopEntity.getUserId(),
+            shopEntity.getUserEntity().getUserStringId(),
             shopEntity.getShopName(),
             shopEntity.getRating(),
             shopEntity.getShopCategoryEntity().getId(),
