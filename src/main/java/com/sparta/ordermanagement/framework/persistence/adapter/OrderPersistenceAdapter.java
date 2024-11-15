@@ -8,13 +8,20 @@ import com.sparta.ordermanagement.application.output.OrderOutputPort;
 import com.sparta.ordermanagement.framework.persistence.entity.order.OrderEntity;
 import com.sparta.ordermanagement.framework.persistence.entity.orderproduct.OrderProductEntity;
 import com.sparta.ordermanagement.framework.persistence.entity.product.ProductEntity;
+import com.sparta.ordermanagement.framework.persistence.entity.user.UserEntity;
 import com.sparta.ordermanagement.framework.persistence.repository.OrderProductRepository;
 import com.sparta.ordermanagement.framework.persistence.repository.OrderRepository;
 import com.sparta.ordermanagement.framework.persistence.repository.ProductRepository;
 import java.util.Optional;
+
+import com.sparta.ordermanagement.framework.persistence.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Component
@@ -23,6 +30,7 @@ public class OrderPersistenceAdapter implements OrderOutputPort {
     private final OrderRepository orderRepository;
     private final OrderProductRepository orderProductRepository;
     private final ProductRepository productRepository;
+    private final UserRepository userRepository;
 
     public Optional<Order> findByOrderUuid(String orderUuid) {
         return orderRepository.findByOrderUuid(orderUuid)
@@ -38,17 +46,13 @@ public class OrderPersistenceAdapter implements OrderOutputPort {
 
     @Transactional
     @Override
-    public Order saveOrder(OrderForCreate orderForCreate) {
+    public String saveOrder(OrderForCreate orderForCreate) {
 
-        OrderEntity orderEntity = orderRepository.save(OrderEntity.from(orderForCreate));
+        UserEntity userEntity = userRepository.findByUserStringId(orderForCreate.userId()).get();
+        OrderEntity orderEntity = orderRepository.save(OrderEntity.from(orderForCreate, userEntity));
+        createOrderWithProducts(orderForCreate, orderEntity);
 
-        ProductEntity productEntity = productRepository.findByProductUuid(orderForCreate.productId())
-                .orElseThrow(() -> new ProductIdInvalidException(orderForCreate.productId()));
-
-        OrderProductEntity orderProductEntity = OrderProductEntity.from(orderForCreate, orderEntity, productEntity);
-        orderProductRepository.save(orderProductEntity);
-
-        return orderEntity.toDomain();
+        return orderEntity.getOrderUuid();
     }
 
     @Override
@@ -74,5 +78,18 @@ public class OrderPersistenceAdapter implements OrderOutputPort {
         orderEntity.cancelOrder();
 
         return orderEntity.getOrderUuid();
+    }
+
+    private void createOrderWithProducts(OrderForCreate orderForCreate, OrderEntity orderEntity) {
+        List<OrderProductEntity> orderProductEntities = orderForCreate.productList().stream()
+                .map(orderProductForCreate -> {
+                    ProductEntity productEntity = productRepository.findByProductUuid(orderProductForCreate.productId())
+                            .orElseThrow(() -> new ProductIdInvalidException(orderProductForCreate.productId()));
+
+                    return OrderProductEntity.from(orderForCreate, orderEntity, productEntity);
+                })
+                .collect(Collectors.toList());
+
+        orderProductRepository.saveAll(orderProductEntities);
     }
 }

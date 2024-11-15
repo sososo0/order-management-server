@@ -1,5 +1,6 @@
 package com.sparta.ordermanagement.application.service;
 
+import com.sparta.ordermanagement.application.domain.orderproduct.OrderProductForCreate;
 import com.sparta.ordermanagement.application.domain.product.Product;
 import com.sparta.ordermanagement.application.domain.product.ProductForCreate;
 import com.sparta.ordermanagement.application.domain.product.ProductForDelete;
@@ -11,6 +12,9 @@ import com.sparta.ordermanagement.application.exception.product.ProductUuidInval
 import com.sparta.ordermanagement.application.output.ProductOutputPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -57,7 +61,7 @@ public class ProductService {
         return productOutputPort.deleteProduct(productForDelete);
     }
 
-    public Product validateProductUuidAndGetProduct(String productUuid) {
+    private Product validateProductUuidAndGetProduct(String productUuid) {
         return productOutputPort.findByProductUuid(productUuid)
             .orElseThrow(() -> new ProductUuidInvalidException(productUuid));
     }
@@ -77,5 +81,12 @@ public class ProductService {
                 product.getProductUuid()
             );
         }
+    }
+
+    public List<Product> validateProductsAndGetProductList(List<OrderProductForCreate> productList) {
+        return productList.stream()
+                .map(orderProduct -> productOutputPort.findByProductUuid(orderProduct.productId())
+                        .orElseThrow(() -> new ProductUuidInvalidException(orderProduct.productId())))
+                .collect(Collectors.toList());
     }
 }
