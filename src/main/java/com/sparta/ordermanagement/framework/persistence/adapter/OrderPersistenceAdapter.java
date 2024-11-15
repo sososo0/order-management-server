@@ -16,6 +16,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 @RequiredArgsConstructor
 @Component
 public class OrderPersistenceAdapter implements OrderOutputPort {
@@ -41,12 +45,7 @@ public class OrderPersistenceAdapter implements OrderOutputPort {
     public String saveOrder(OrderForCreate orderForCreate) {
 
         OrderEntity orderEntity = orderRepository.save(OrderEntity.from(orderForCreate));
-
-        ProductEntity productEntity = productRepository.findByProductUuid(orderForCreate.productId())
-                .orElseThrow(() -> new ProductIdInvalidException(orderForCreate.productId()));
-
-        OrderProductEntity orderProductEntity = OrderProductEntity.from(orderForCreate, orderEntity, productEntity);
-        orderProductRepository.save(orderProductEntity);
+        createOrderWithProducts(orderForCreate, orderEntity);
 
         return orderEntity.getOrderUuid();
     }
@@ -74,5 +73,18 @@ public class OrderPersistenceAdapter implements OrderOutputPort {
         orderEntity.cancelOrder();
 
         return orderEntity.getOrderUuid();
+    }
+
+    private void createOrderWithProducts(OrderForCreate orderForCreate, OrderEntity orderEntity) {
+        List<OrderProductEntity> orderProductEntities = orderForCreate.productList().stream()
+                .map(orderProductForCreate -> {
+                    ProductEntity productEntity = productRepository.findByProductUuid(orderProductForCreate.productId())
+                            .orElseThrow(() -> new ProductIdInvalidException(orderProductForCreate.productId()));
+
+                    return OrderProductEntity.from(orderForCreate, orderEntity, productEntity);
+                })
+                .collect(Collectors.toList());
+
+        orderProductRepository.saveAll(orderProductEntities);
     }
 }

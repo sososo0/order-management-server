@@ -2,6 +2,7 @@ package com.sparta.ordermanagement.framework.persistence.entity.orderproduct;
 
 
 import com.sparta.ordermanagement.application.domain.order.OrderForCreate;
+import com.sparta.ordermanagement.application.domain.orderproduct.OrderProduct;
 import com.sparta.ordermanagement.framework.persistence.entity.BaseEntity;
 import com.sparta.ordermanagement.framework.persistence.entity.order.OrderEntity;
 import com.sparta.ordermanagement.framework.persistence.entity.product.ProductEntity;
@@ -50,5 +51,9 @@ public class OrderProductEntity extends BaseEntity {
                 productEntity,
                 orderForCreate.count(),
                 orderForCreate.orderPrice());
+    }
+
+    public OrderProduct toDomain() {
+        return new OrderProduct(id, orderEntity.toDomain(), productEntity.toDomain(), count, orderPrice);
     }
 }

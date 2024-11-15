@@ -2,32 +2,26 @@ package com.sparta.ordermanagement.application.domain.orderproduct;
 
 import com.sparta.ordermanagement.application.domain.order.Order;
 import com.sparta.ordermanagement.application.domain.product.Product;
-import com.sparta.ordermanagement.framework.persistence.entity.order.OrderEntity;
 
 public class OrderProduct {
 
     private Long id;
-    private String OrderProductUuid;
     private Order order;
     private Product product;
-    private int productQuantity;
+    private int count;
+    private int orderPrice;
 
-    public OrderProduct(Long id, String OrderProductUuid, Order order,
-                        Product product, int productQuantity) {
+    public OrderProduct(Long id, Order order, Product product, int count, int orderPrice) {
 
         this.id = id;
-        this.OrderProductUuid = OrderProductUuid;
         this.order = order;
         this.product = product;
-        this.productQuantity = productQuantity;
+        this.count = count;
+        this.orderPrice = orderPrice;
     }
 
     public Long getId() {
         return id;
-    }
-
-    public String getOrderProductUuid() {
-        return OrderProductUuid;
     }
 
     public Order getOrder() {
@@ -38,11 +32,12 @@ public class OrderProduct {
         return product;
     }
 
-    public int getProductQuantity() {
-        return productQuantity;
+    public int getCount() {
+        return count;
     }
 
-    public void setOrderEntity(OrderEntity orderEntity) {
-        this.order = orderEntity.toDomain();
+    public int getOrderPrice() {
+        return orderPrice;
     }
+
 }

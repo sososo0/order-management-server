@@ -14,7 +14,8 @@ public enum OrderErrorMessage {
     ORDER_STATE_CANNOT_DB_CHANGED("주문 : %s 의 주문 상태를 '취소'로 변경할 수 없습니다."),
     ORDER_STATE_INVALID("유효하지 않은 주문 상태 입니다."),
     ORDER_UUID_INVALID("유효하지 않은 주문 식별자 입니다. : %s"),
-    ORDER_DELETED("삭제된 주문 식별자 입니다. : %s");
+    ORDER_DELETED("삭제된 주문 식별자 입니다. : %s"),
+    UNAUTHORIZED_ACCESS("유효하지 않은 권한의 유저 입니다.");
 
     private final String message;
 }
