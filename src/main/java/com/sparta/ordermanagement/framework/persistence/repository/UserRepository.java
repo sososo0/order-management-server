@@ -13,8 +13,8 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
     Optional<UserEntity> findByUserStringId(String userStringId);
     Boolean existsByUserStringId(String userStringId);
-
     @Modifying
     @Query("UPDATE p_user u SET u.role = :role WHERE u.userStringId = :userStringId")
     Integer updateByUserStringId(@Param("userStringId")String userStringId, @Param("role") Role role);
+    int deleteByUserStringId(String userStringId);
 }
