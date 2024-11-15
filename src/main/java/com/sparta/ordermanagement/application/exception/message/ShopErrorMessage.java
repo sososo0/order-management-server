@@ -12,6 +12,7 @@ public enum ShopErrorMessage {
     SHOP_ID_INVALID("유효하지 않은 가게 식별자 입니다. : %s"),
     SHOP_UUID_INVALID("유효하지 않은 가게 식별자 입니다. : %s"),
     SHOP_OWNER_MISMATCH("가게 소유자 정보가 일치하지 않습니다. : %s");;
+    SHOP_DELETED("삭제된 가게 식별자 입니다. : %s");
 
     private final String message;
 }

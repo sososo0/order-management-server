@@ -3,6 +3,7 @@ package com.sparta.ordermanagement.application.service;
 import com.sparta.ordermanagement.application.domain.product.Product;
 import com.sparta.ordermanagement.application.domain.product.ProductForCreate;
 import com.sparta.ordermanagement.application.domain.product.ProductForDelete;
+import com.sparta.ordermanagement.application.domain.product.ProductForUpdate;
 import com.sparta.ordermanagement.application.domain.product.ProductStateForUpdate;
 import com.sparta.ordermanagement.application.exception.product.ProductDeletedException;
 import com.sparta.ordermanagement.application.exception.product.ProductNotBelongToShopException;
@@ -19,13 +20,24 @@ public class ProductService {
     private final ShopService shopService;
 
     public Product createProduct(ProductForCreate productForCreate) {
-        shopService.validateShopUuid(productForCreate.shopUuid());
+        shopService.validateNotDeletedShopUuid(productForCreate.shopUuid());
         return productOutputPort.saveProduct(productForCreate);
+    }
+
+    public Product updateProduct(ProductForUpdate productForUpdate) {
+
+        shopService.validateNotDeletedShopUuid(productForUpdate.shopUuid());
+
+        Product product = validateProductUuidAndGetProduct(productForUpdate.productUuid());
+        validateProductBelongToShop(product, productForUpdate.shopUuid());
+        validateProductIsNotDeleted(product);
+
+        return productOutputPort.updateProduct(productForUpdate);
     }
 
     public Product updateProductState(ProductStateForUpdate productStateForUpdate) {
 
-        shopService.validateShopUuid(productStateForUpdate.shopUuid());
+        shopService.validateNotDeletedShopUuid(productStateForUpdate.shopUuid());
 
         Product product = validateProductUuidAndGetProduct(productStateForUpdate.productUuid());
         validateProductBelongToShop(product, productStateForUpdate.shopUuid());
@@ -36,7 +48,7 @@ public class ProductService {
 
     public Product deleteProduct(ProductForDelete productForDelete) {
 
-        shopService.validateShopUuid(productForDelete.shopUuid());
+        shopService.validateNotDeletedShopUuid(productForDelete.shopUuid());
 
         Product product = validateProductUuidAndGetProduct(productForDelete.productUuid());
         validateProductBelongToShop(product, productForDelete.shopUuid());

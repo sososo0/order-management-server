@@ -10,7 +10,7 @@ public class Shop {
     private ShopCategory category;
     private String shopName;
     private double rating;
-
+    private boolean isDeleted;
     private String ownerStringId;
 
     public Shop(Long id, String uuid, ShopCategory category, String shopName, double rating) {
@@ -19,6 +19,15 @@ public class Shop {
         this.category = category;
         this.shopName = shopName;
         this.rating = rating;
+    }
+  
+    public Shop(Long id, String uuid, ShopCategory category, String shopName, double rating, boolean isDeleted) {
+        this.id = id;
+        this.uuid = uuid;
+        this.category = category;
+        this.shopName = shopName;
+        this.rating = rating;
+        this.isDeleted = isDeleted;
     }
 
     public Shop(Long id, String uuid, ShopCategory category, String shopName, double rating, String ownerStringId) {
@@ -60,5 +69,8 @@ public class Shop {
 
     public boolean isOwnBy(User user) {
         return user.getUserStringId().equals(ownerStringId);
+      
+    public boolean getIsDeleted() {
+        return isDeleted;
     }
 }

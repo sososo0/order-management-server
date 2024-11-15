@@ -39,8 +39,15 @@ public class AdminUserService {
 
     }
 
+    @Transactional(readOnly = true)
     public List<User> getUsers() {
 
         return userOutputPort.findAll();
+    }
+
+    @Transactional
+    public Integer updateUser(String userStringId, Role role) {
+
+        return userOutputPort.updateUserById(userStringId, role);
     }
 }

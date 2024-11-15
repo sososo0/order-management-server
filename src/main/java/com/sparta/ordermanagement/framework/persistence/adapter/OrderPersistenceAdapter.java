@@ -11,11 +11,10 @@ import com.sparta.ordermanagement.framework.persistence.entity.product.ProductEn
 import com.sparta.ordermanagement.framework.persistence.repository.OrderProductRepository;
 import com.sparta.ordermanagement.framework.persistence.repository.OrderRepository;
 import com.sparta.ordermanagement.framework.persistence.repository.ProductRepository;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Component
@@ -24,6 +23,18 @@ public class OrderPersistenceAdapter implements OrderOutputPort {
     private final OrderRepository orderRepository;
     private final OrderProductRepository orderProductRepository;
     private final ProductRepository productRepository;
+
+    public Optional<Order> findByOrderUuid(String orderUuid) {
+        return orderRepository.findByOrderUuid(orderUuid)
+            .map(OrderEntity::toDomain)
+            .or(Optional::empty);
+    }
+
+    public Optional<Order> findByOrderUuidAndIsDeletedFalse(String orderUuid) {
+        return orderRepository.findByOrderUuidAndIsDeletedFalse(orderUuid)
+            .map(OrderEntity::toDomain)
+            .or(Optional::empty);
+    }
 
     @Transactional
     @Override

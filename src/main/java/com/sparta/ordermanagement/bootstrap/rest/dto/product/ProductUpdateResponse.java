@@ -6,13 +6,13 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class ProductCreateResponse {
+public class ProductUpdateResponse {
 
     private final String productUuid;
     private final String shopUuid;
 
-    public static ProductCreateResponse from(Product product) {
-        return new ProductCreateResponse(
+    public static ProductUpdateResponse from(Product product) {
+        return new ProductUpdateResponse(
             product.getProductUuid(),
             product.getShop().getUuid()
         );

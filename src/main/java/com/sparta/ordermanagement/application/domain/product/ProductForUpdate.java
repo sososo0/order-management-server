@@ -1,14 +1,12 @@
 package com.sparta.ordermanagement.application.domain.product;
 
-import com.sparta.ordermanagement.framework.persistence.entity.product.ProductState;
-
-public record ProductForCreate(
+public record ProductForUpdate(
     String productName,
     Integer productPrice,
     String productDescription,
-    ProductState productState,
     String shopUuid,
-    String userId
+    String productUuid,
+    String userStringId
 ) {
 
 }

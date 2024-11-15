@@ -14,10 +14,11 @@ public class Order {
     private String deliveryAddress;
     private String requestOrder;
     private LocalDateTime createdAt;
+    private boolean isDeleted;
 
     public Order(Long id, String orderUuid, OrderState orderState,
                  OrderType orderType, String deliveryAddress, String requestOrder,
-                 String shopId, String userId, LocalDateTime createdAt) {
+                 String shopId, String userId, LocalDateTime createdAt, boolean isDeleted) {
 
         this.id = id;
         this.orderUuid = orderUuid;
@@ -28,6 +29,7 @@ public class Order {
         this.shopId = shopId;
         this.userId = userId;
         this.createdAt = createdAt;
+        this.isDeleted = isDeleted;
     }
 
     public Long getId() {
@@ -62,5 +64,9 @@ public class Order {
 
     public LocalDateTime getCreatedAt() {
         return createdAt;
+    }
+
+    public boolean getIsDeleted() {
+        return isDeleted;
     }
 }
