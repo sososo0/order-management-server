@@ -64,4 +64,9 @@ public class UserService {
 
         return token;
     }
+
+    public User findByUserStringId(String userId) {
+        return userOutputPort.findByUserStringId(userId)
+            .orElseThrow(() -> new InvalidValueException("Id에 해당하는 유저가 존재하지 않습니다. Id=" + userId));
+    }
 }
