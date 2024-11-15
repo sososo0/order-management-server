@@ -4,6 +4,7 @@ import com.sparta.ordermanagement.application.domain.order.Order;
 import com.sparta.ordermanagement.application.domain.order.OrderForCreate;
 import com.sparta.ordermanagement.application.domain.order.OrderForUpdate;
 import com.sparta.ordermanagement.application.domain.order.OrderState;
+import com.sparta.ordermanagement.bootstrap.admin.dto.OrderUpdateRequest;
 import com.sparta.ordermanagement.framework.persistence.entity.BaseEntity;
 import com.sparta.ordermanagement.framework.persistence.entity.orderproduct.OrderProductEntity;
 import com.sparta.ordermanagement.framework.persistence.entity.user.UserEntity;
@@ -94,10 +95,20 @@ public class OrderEntity extends BaseEntity {
         super.updateFrom(orderForUpdate.updateUserId());
     }
 
-    public void cancelOrder() {
+    public void cancelOrder(String userId) {
 
         this.orderState = OrderState.CANCELED;
-        /* 업데이트 유저 바꾸는 건 유저 검증 만들어지면 추가*/
-        //super.updateFrom();
+        super.updateFrom(userId);
+    }
+
+    public void updateFrom(OrderUpdateRequest orderUpdateRequest, String userStringId) {
+
+        orderState = orderUpdateRequest.getOrderState();
+        orderType = orderUpdateRequest.getOrderType();
+        super.updateFrom(userStringId);
+    }
+
+    public void deleteFrom(String deletedUserId) {
+        super.deleteFrom(deletedUserId);
     }
 }

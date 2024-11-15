@@ -39,6 +39,10 @@ public class BaseEntity {
         this.updatedBy = updatedBy;
     }
 
+    protected void createFrom(String createdUserId) {
+        this.createdBy = createdUserId;
+    }
+
     protected void updateFrom(String updatedUserId) {
         this.updatedBy = updatedUserId;
     }

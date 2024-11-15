@@ -72,7 +72,7 @@ public class OrderService {
             throw new OrderCancellationTimeExceededException(orderId);
         }
 
-        return orderOutPutPort.cancelOrder(order);
+        return orderOutPutPort.cancelOrder(order, userId);
     }
 
     private Order validateOrderIdAndGetOrder(String orderId) {
