@@ -58,11 +58,10 @@ public class OrderService {
         return orderOutPutPort.updateOrderState(orderForUpdate);
     }
 
-    public String cancelOrder(String orderId) {
-        // 유저 검증 부분 일단 생략 - 5분 제한 시간 확인은 어디서 하는 게 좋을까?
+    public String cancelOrder(String orderId, String userId) {
         Order order = validateOrderIdAndGetOrder(orderId);
+        validateOrderOwnership(userId, order.getUserId());
 
-        // 일단 order에서 생성 시간을 가져왔다고 치고 기능 개발
         LocalDateTime orderTime = order.getCreatedAt();
         LocalDateTime currentTime = LocalDateTime.now();
         Duration duration = Duration.between(orderTime, currentTime);
