@@ -5,6 +5,7 @@ import com.sparta.ordermanagement.application.service.UserService;
 import com.sparta.ordermanagement.bootstrap.rest.dto.user.UserSigninRequest;
 import com.sparta.ordermanagement.bootstrap.rest.dto.user.UserSignupRequest;
 import com.sparta.ordermanagement.bootstrap.rest.exception.exceptions.RequestValidationException;
+import com.sparta.ordermanagement.framework.persistence.entity.user.Role;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +38,9 @@ public class UserCommandController {
             log.error("[UserCommandController]-[signupUser] error");
             String bindingErrorMessage = bindingResult.getAllErrors().toString();
             throw new RequestValidationException(bindingErrorMessage);
+        }
+        if(userSignupRequest.getRole().equals(Role.MANAGER)|| userSignupRequest.getRole().equals(Role.MASTER)){
+            throw new RequestValidationException("관리자 계정은 등록할 수 없습니다.");
         }
 
         String signupUserStringId = userService.signup(userSignupRequest.toDomain());
