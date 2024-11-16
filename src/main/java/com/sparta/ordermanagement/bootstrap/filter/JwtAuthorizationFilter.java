@@ -19,6 +19,7 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.parameters.P;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -39,6 +40,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     );
 
     //필터링할 url 추가하시면 됩니다. (user 정보가 필요하거나 권한이 필요한 url)
+
     private static final Set<Pattern> FILTERING_URIS = Set.of(
             Pattern.compile("^/api/v1/example$"),
             Pattern.compile("^/api/v1/example2$"),
@@ -50,7 +52,8 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             Pattern.compile(String.format("^/api/v1/orders/%s$", UUID_PATTERN)),
             Pattern.compile(String.format("^/api/v1/orders/%s/cancel$", UUID_PATTERN)),
             Pattern.compile(String.format("^/api/v1/orders/%s/reviews$", UUID_PATTERN)),
-            Pattern.compile(String.format("^/api/v1/orders/%s/reviews/%s$", UUID_PATTERN, UUID_PATTERN))
+            Pattern.compile(String.format("^/api/v1/orders/%s/reviews/%s$", UUID_PATTERN, UUID_PATTERN)),
+            Pattern.compile("^/api/v1/ai$")
     );
 
 
