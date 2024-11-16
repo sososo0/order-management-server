@@ -75,4 +75,8 @@ public class PaymentEntity extends BaseEntity {
 
         return new Payment(id, orderEntity.getOrderUuid(), paymentUuid, amount, paymentState, pgProvider);
     }
+
+    public void failedState() {
+        paymentState = PaymentState.FAILED;
+    }
 }
