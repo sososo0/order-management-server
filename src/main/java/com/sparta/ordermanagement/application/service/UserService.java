@@ -8,7 +8,9 @@ import com.sparta.ordermanagement.application.domain.user.UserForSignup;
 import com.sparta.ordermanagement.application.exception.InvalidValueException;
 import com.sparta.ordermanagement.application.exception.shop.ShopIdInvalidException;
 import com.sparta.ordermanagement.application.exception.user.UserAccessDeniedException;
+import com.sparta.ordermanagement.application.exception.user.UserAuthenticationException;
 import com.sparta.ordermanagement.application.output.UserOutputPort;
+import com.sparta.ordermanagement.bootstrap.rest.exception.exceptions.RequestValidationException;
 import com.sparta.ordermanagement.bootstrap.util.JwtUtil;
 import com.sparta.ordermanagement.framework.persistence.entity.user.Role;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +32,9 @@ public class UserService {
     @Transactional
     public String signup(User user){
 
+        log.info("[UserService]-[signup] 로그인 요청");
+
+        //password 인코딩
         String encodedPassword = passwordEncoder.encode(user.getPassword());
 
         //회원 중복 확인
@@ -37,33 +42,30 @@ public class UserService {
             throw new InvalidValueException("동일한 Id를 가진 유저가 이미 존재합니다.");
         }
 
-        //회원 권한 확인
-        if(user.getRole().equals(Role.MANAGER)|| user.getRole().equals(Role.MASTER)){
-            throw new InvalidValueException("관리자 계정은 등록할 수 없습니다.");
-        }
+        String signupUserStringId = userOutputPort.saveUser(user, encodedPassword);
 
-        return userOutputPort.saveUser(user, encodedPassword);
+        return signupUserStringId;
     }
 
-
+    @Transactional(readOnly = true)
     public String signin(UserForSignin userRequest) {
 
         log.info("[UserService]-[signin] 로그인 요청");
 
         //회원 아이디 확인
         User findUser = userOutputPort.findByUserStringId(userRequest.userStringId())
-                .orElseThrow(() -> new InvalidValueException("ID가 잘못 되었습니다."));
+                .orElseThrow(() -> new UserAuthenticationException("유효하지 않은 ID"));
 
         //비밀번호 확인
         if(!passwordEncoder.matches(userRequest.password(), findUser.getPassword())){
-            log.info("[UserService]-[signin] 유효하지 않은 비밀번호");
-            throw new InvalidValueException("유효하지 않은 비밀번호");
+            throw new UserAuthenticationException("유효하지 않은 비밀번호");
         }
 
-        String token = jwtUtil.createToken(findUser.getUserStringId(), findUser.getRole());
-        log.info("[UserService]-[signin] 토큰 생성 성공");
+        String accessToken = jwtUtil.createToken(findUser.getUserStringId(), findUser.getRole());
 
-        return token;
+        log.info("[UserService]-[signin] 로그인 성공");
+
+        return accessToken;
     }
 
     public User findByUserStringId(String userId) {
