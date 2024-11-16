@@ -4,6 +4,7 @@ import com.sparta.ordermanagement.application.exception.InvalidValueException;
 import com.sparta.ordermanagement.application.service.UserService;
 import com.sparta.ordermanagement.bootstrap.rest.dto.user.UserSigninRequest;
 import com.sparta.ordermanagement.bootstrap.rest.dto.user.UserSignupRequest;
+import com.sparta.ordermanagement.bootstrap.rest.exception.exceptions.RequestValidationException;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.util.Map;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -24,54 +28,45 @@ public class UserCommandController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/signup")
-    public String signupUser(@RequestBody @Valid UserSignupRequest userSignupRequest, BindingResult bindingResult) {
+    public Map.Entry signupUser(@RequestBody @Valid UserSignupRequest userSignupRequest, BindingResult bindingResult) {
 
-        log.info("[UserCommandController] /signup API call");
+        log.info("[UserCommandController]-[signupUser] API call");
 
-        // 유효성 검사 실패 시 오류 처리
+        // Validation
         if (bindingResult.hasErrors()) {
-
-            StringBuilder errorMessages = new StringBuilder();
-            bindingResult.getAllErrors().forEach(error -> {
-                errorMessages.append(error.getDefaultMessage()).append("\n");
-            });
-
-            log.error("[UserCommandController] /signup error: {}", errorMessages.toString());
-
-            throw new InvalidValueException(errorMessages.toString());
+            log.error("[UserCommandController]-[signupUser] error");
+            String bindingErrorMessage = bindingResult.getAllErrors().toString();
+            throw new RequestValidationException(bindingErrorMessage);
         }
 
-        return userService.signup(userSignupRequest.toDomain());
+        String signupUserStringId = userService.signup(userSignupRequest.toDomain());
+
+        return Map.entry("userStringId", signupUserStringId);
     }
 
-
+    @ResponseStatus(HttpStatus.OK)
     @PostMapping("/signin")
-    public ResponseEntity<String> signinUser(@RequestBody UserSigninRequest userSigninRequest, BindingResult bindingResult){
+    public ResponseEntity<String> signinUser(@RequestBody @Valid UserSigninRequest userSigninRequest, BindingResult bindingResult){
 
-        log.info("[UserCommandController] /signin API call");
+        log.info("[UserCommandController]-[signinUser] API call");
 
-        // 유효성 검사 실패 시 오류 처리
+        // Validation
         if (bindingResult.hasErrors()) {
-
-            StringBuilder errorMessages = new StringBuilder();
-            bindingResult.getAllErrors().forEach(error -> {
-                errorMessages.append(error.getDefaultMessage()).append("\n");
-            });
-
-            log.error("[UserCommandController] /signin error: {}", errorMessages.toString());
-
-            throw new InvalidValueException(errorMessages.toString());
+            log.error("[UserCommandController]-[signinUser] error");
+            String bindingErrorMessage = bindingResult.getAllErrors().toString();
+            throw new RequestValidationException(bindingErrorMessage);
         }
 
-        String token = userService.signin(userSigninRequest.toDomain());
+        String accessToken = userService.signin(userSigninRequest.toDomain());
 
-        // 응답에 토큰 설정
+        // 응답 헤더에 토큰 설정
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", token);
+        headers.set("Authorization", accessToken);
 
-        return ResponseEntity.ok()
+        return ResponseEntity
+                .ok()
                 .headers(headers)
-                .body("signin successful");
+                .body("user signin successfully");
     }
 
 }

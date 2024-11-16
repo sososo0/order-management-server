@@ -3,6 +3,7 @@ package com.sparta.ordermanagement.bootstrap.rest.exception;
 import com.sparta.ordermanagement.application.exception.ConstraintException;
 import com.sparta.ordermanagement.application.exception.ForbiddenException;
 import com.sparta.ordermanagement.application.exception.InvalidValueException;
+import com.sparta.ordermanagement.bootstrap.rest.exception.exceptions.RequestValidationException;
 import com.sparta.ordermanagement.bootstrap.rest.exception.response.ApiResponse;
 import com.sparta.ordermanagement.bootstrap.rest.exception.response.ApiResponse.Error;
 import java.util.stream.Collectors;
@@ -58,5 +59,12 @@ public class GlobalExceptionHandler {
         log.error("exceptionHandle", e);
 
         return ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+    }
+
+    @ExceptionHandler(RequestValidationException.class)
+    public ResponseEntity<Error> exceptionHandle(RequestValidationException e) {
+        log.error("RequestValidationExceptionHandle", e);
+
+        return ApiResponse.error(HttpStatus.BAD_REQUEST, e.getMessage());
     }
 }
