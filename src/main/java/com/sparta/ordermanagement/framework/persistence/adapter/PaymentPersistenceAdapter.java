@@ -2,6 +2,8 @@ package com.sparta.ordermanagement.framework.persistence.adapter;
 
 import com.sparta.ordermanagement.application.domain.payment.Payment;
 import com.sparta.ordermanagement.application.domain.payment.PaymentForUpdate;
+import com.sparta.ordermanagement.application.exception.payment.PaymentFailedException;
+import com.sparta.ordermanagement.application.exception.payment.PaymentProcessingException;
 import com.sparta.ordermanagement.application.output.PaymentOutputPort;
 import com.sparta.ordermanagement.framework.persistence.entity.order.OrderEntity;
 import com.sparta.ordermanagement.framework.persistence.entity.payment.PaymentEntity;
@@ -33,7 +35,14 @@ public class PaymentPersistenceAdapter implements PaymentOutputPort {
     @Override
     public Payment processPayment(PaymentForUpdate paymentForUpdate, int amount) {
         PaymentEntity paymentEntity = paymentRepository.findByPaymentUuid(paymentForUpdate.paymentUuid()).get();
-        paymentEntity.processPayment(paymentForUpdate, amount);
+
+        try {
+            paymentEntity.processPayment(paymentForUpdate, amount);
+        } catch (PaymentProcessingException e) {
+            paymentEntity.failedState();
+
+            throw new PaymentFailedException(e);
+        }
 
         return  paymentEntity.toDomain();
     }
