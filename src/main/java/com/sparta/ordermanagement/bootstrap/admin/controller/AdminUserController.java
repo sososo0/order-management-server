@@ -1,6 +1,7 @@
 package com.sparta.ordermanagement.bootstrap.admin.controller;
 
 import com.sparta.ordermanagement.application.admin.AdminUserService;
+import com.sparta.ordermanagement.application.exception.InvalidValueException;
 import com.sparta.ordermanagement.bootstrap.admin.dto.UserAdminSignupRequest;
 import com.sparta.ordermanagement.bootstrap.admin.dto.UserGetResponse;
 import com.sparta.ordermanagement.bootstrap.auth.UserDetailsImpl;
@@ -49,6 +50,9 @@ public class AdminUserController {
         if(!(userDetails.getRole() == Role.MANAGER || userDetails.getRole() == Role.MASTER || userDetails.getRole() == Role.OWNER)) {
             //이후 OWNER 삭제하기
             throw new ForbiddenActionException("API 접근 권한이 없습니다.");
+        }
+        if(!(userAdminSignupRequest.role().equals(Role.MANAGER.name())|| userAdminSignupRequest.role().equals(Role.MASTER.name()))){
+            throw new InvalidValueException("일반 계정 등록은 다른 API 를 사용해야 합니다.");
         }
 
         String signupUserStringId = adminUserService.signup(userAdminSignupRequest.toDomain());
