@@ -1,12 +1,10 @@
 package com.sparta.ordermanagement.bootstrap.rest.controller;
 
-import com.sparta.ordermanagement.application.exception.InvalidValueException;
 import com.sparta.ordermanagement.application.service.UserService;
 import com.sparta.ordermanagement.bootstrap.rest.dto.user.UserSigninRequest;
 import com.sparta.ordermanagement.bootstrap.rest.dto.user.UserSignupRequest;
 import com.sparta.ordermanagement.bootstrap.rest.exception.exceptions.RequestValidationException;
 import com.sparta.ordermanagement.framework.persistence.entity.user.Role;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Map;
 
@@ -27,18 +24,21 @@ public class UserCommandController {
 
     private final UserService userService;
 
+    private static void requestValidation(BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            String bindingErrorMessage = bindingResult.getAllErrors().toString();
+            throw new RequestValidationException(bindingErrorMessage);
+        }
+    }
+
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/signup")
     public Map.Entry signupUser(@RequestBody @Valid UserSignupRequest userSignupRequest, BindingResult bindingResult) {
 
         log.info("[UserCommandController]-[signupUser] API call");
 
-        // Validation
-        if (bindingResult.hasErrors()) {
-            log.error("[UserCommandController]-[signupUser] error");
-            String bindingErrorMessage = bindingResult.getAllErrors().toString();
-            throw new RequestValidationException(bindingErrorMessage);
-        }
+        //Validation
+        requestValidation(bindingResult);
         if(userSignupRequest.getRole().equals(Role.MANAGER)|| userSignupRequest.getRole().equals(Role.MASTER)){
             throw new RequestValidationException("관리자 계정은 등록할 수 없습니다.");
         }
@@ -54,12 +54,8 @@ public class UserCommandController {
 
         log.info("[UserCommandController]-[signinUser] API call");
 
-        // Validation
-        if (bindingResult.hasErrors()) {
-            log.error("[UserCommandController]-[signinUser] error");
-            String bindingErrorMessage = bindingResult.getAllErrors().toString();
-            throw new RequestValidationException(bindingErrorMessage);
-        }
+        //Validation
+        requestValidation(bindingResult);
 
         String accessToken = userService.signin(userSigninRequest.toDomain());
 
