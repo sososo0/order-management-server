@@ -6,10 +6,10 @@ import java.time.LocalDateTime;
 
 public class Order {
 
-    private Long id;
     private String orderUuid;
     private String userId;
     private String shopId;
+    private String shopName;
     private OrderState orderState;
     private OrderType orderType;
     private String deliveryAddress;
@@ -17,24 +17,20 @@ public class Order {
     private LocalDateTime createdAt;
     private boolean isDeleted;
 
-    public Order(Long id, String orderUuid, OrderState orderState,
+    public Order(String orderUuid, OrderState orderState,
                  OrderType orderType, String deliveryAddress, String requestOrder,
-                 String shopId, String userId, LocalDateTime createdAt, boolean isDeleted) {
+                 String shopId, String shopName, String userId, LocalDateTime createdAt, boolean isDeleted) {
 
-        this.id = id;
         this.orderUuid = orderUuid;
         this.orderState = orderState;
         this.orderType = orderType;
         this.deliveryAddress = deliveryAddress;
         this.requestOrder = requestOrder;
         this.shopId = shopId;
+        this.shopName = shopName;
         this.userId = userId;
         this.createdAt = createdAt;
         this.isDeleted = isDeleted;
-    }
-
-    public Long getId() {
-        return id;
     }
 
     public String getOrderUuid() {
@@ -58,6 +54,10 @@ public class Order {
     }
 
     public String getShopId() { return shopId; }
+
+    public String getShopName() {
+        return shopName;
+    }
 
     public String getUserId() {
         return userId;

@@ -40,7 +40,7 @@ public class OrderUpdateResponse {
                 orderEntity.getDeliveryAddress(),
                 orderEntity.getRequestOrder(),
                 orderEntity.getUserEntity().getUserStringId(),
-                orderEntity.getShopId(),
+                orderEntity.getShopEntity().getShopUuid(),
                 orderProductResponses,  // 변환된 orderProduct 목록
                 paymentUuid,
                 History.from(orderEntity)

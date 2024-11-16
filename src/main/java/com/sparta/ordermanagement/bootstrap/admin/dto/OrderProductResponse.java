@@ -12,6 +12,7 @@ public class OrderProductResponse {
 
     private Long orderProductId;
     private String productUuid;
+    private String productName;
     private Integer count;
     private Integer orderPrice;
 
@@ -19,6 +20,7 @@ public class OrderProductResponse {
         return new OrderProductResponse(
                 orderProductEntity.getId(),
                 orderProductEntity.getProductEntity().getProductUuid(),
+                orderProductEntity.getProductEntity().getProductName(),
                 orderProductEntity.getCount(),
                 orderProductEntity.getOrderPrice()
         );

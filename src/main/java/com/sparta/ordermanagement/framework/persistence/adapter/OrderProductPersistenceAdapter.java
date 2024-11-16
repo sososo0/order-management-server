@@ -25,4 +25,12 @@ public class OrderProductPersistenceAdapter implements OrderProductOutputPort {
                 .stream().map(OrderProductEntity::toDomain)
                 .collect(Collectors.toList());
     }
+
+    @Transactional
+    @Override
+    public List<OrderProduct> findByOrder_OrderUuidIn(List<String> orderIds) {
+        return orderProductRepository.findByOrderEntity_OrderUuidIn(orderIds)
+                .stream().map(OrderProductEntity::toDomain)
+                .collect(Collectors.toList());
+    }
 }

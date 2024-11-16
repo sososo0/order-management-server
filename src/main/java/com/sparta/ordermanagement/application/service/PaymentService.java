@@ -48,7 +48,7 @@ public class PaymentService {
         userOutputPort.findByUserStringId(userId)
                 .orElseThrow(() -> new UserIdInvalidException(userId));
 
-        Order order = orderOutputPort.findByOrderId(orderId)
+        Order order = orderOutputPort.findByOrderUuid(orderId)
                 .orElseThrow(() -> new InvalidOrderException(orderId));
 
         if (order.getUserId().equals(userId)) {
@@ -59,9 +59,10 @@ public class PaymentService {
     }
 
     private int calculateTotalOrderPrice(List<OrderProduct> orderProducts) {
-        return orderProducts.stream()
+        return orderProducts.stream().mapToInt(OrderProduct::getOrderPrice).sum();
+                /* count 랑 OrderPrice 합쳐서 계산 할 경우
                 .mapToInt(orderProduct -> orderProduct.getCount() * orderProduct.getOrderPrice())
-                .sum();
+                .sum(); */
     }
 
     public void validateOrderCheckCanceled(Order order) {

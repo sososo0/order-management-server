@@ -2,18 +2,20 @@ package com.sparta.ordermanagement.framework.persistence.adapter;
 
 import com.sparta.ordermanagement.application.domain.shop.Shop;
 import com.sparta.ordermanagement.application.domain.shop.ShopForUpdate;
+import com.sparta.ordermanagement.application.exception.InvalidValueException;
 import com.sparta.ordermanagement.application.output.ShopOutputPort;
 import com.sparta.ordermanagement.framework.persistence.entity.shop.ShopEntity;
 import com.sparta.ordermanagement.framework.persistence.repository.ShopQueryRepository;
 import com.sparta.ordermanagement.framework.persistence.repository.ShopRepository;
 import com.sparta.ordermanagement.framework.persistence.vo.Cursor;
-import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Component
@@ -62,5 +64,11 @@ public class ShopPersistenceAdapter implements ShopOutputPort {
     public List<Shop> findAllByKeyword(String keyword, Cursor cursor) {
         return shopQueryRepository.findAllByKeyword(keyword, cursor)
             .stream().map(ShopEntity::toDomain).toList();
+    }
+
+    public String findByUserId(String userStringId) {
+        return shopRepository.findByUserEntity_UserStringId(userStringId)
+                .map(ShopEntity::getShopUuid)
+                .orElseThrow(() -> new InvalidValueException("해당 유저의 가게 ID를 찾을 수 없습니다."));
     }
 }

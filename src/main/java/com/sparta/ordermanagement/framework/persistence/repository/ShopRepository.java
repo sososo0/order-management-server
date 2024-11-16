@@ -32,4 +32,7 @@ public interface ShopRepository extends JpaRepository<ShopEntity, String> {
     Page<ShopEntity> findAllByDeletedIsFalse(Pageable pageable);
 
     Optional<ShopEntity> findByShopUuid(String uuid);
+
+    @Query("SELECT s FROM p_shop s WHERE s.userEntity.userStringId =:userStringId")
+    Optional<ShopEntity> findByUserEntity_UserStringId(@Param("userStringId") String userStringId);
 }

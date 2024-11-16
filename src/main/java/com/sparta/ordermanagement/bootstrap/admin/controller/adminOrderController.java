@@ -52,6 +52,8 @@ public class adminOrderController {
                 .map(OrderResponse::from);
     }
 
+    @PaginationConstraint
+
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/{orderId}")
     @PreAuthorize("hasAnyRole('MANAGER', 'MASTER')")
