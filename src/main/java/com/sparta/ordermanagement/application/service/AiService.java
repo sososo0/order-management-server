@@ -85,7 +85,9 @@ public class AiService {
 
     @Transactional
     public String aiRecommendProductName(AiForRecommendProductName domain, String userStringId){
-        
+
+        log.info("[AiService]-[aiRecommendProductName]");
+
         //Ai 서비스에 Request 날리기
         ResponseEntity<String> responseEntity = postHttpRequestToAiService(domain.getRequestContent());
         String responseJson = responseEntity.getBody();
