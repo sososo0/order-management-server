@@ -76,12 +76,12 @@ public class OrderService {
     }
 
     private Order validateOrderIdAndGetOrder(String orderId) {
-        return orderOutPutPort.findByOrderId(orderId)
+        return orderOutPutPort.findByOrderUuid(orderId)
                 .orElseThrow(() -> new InvalidOrderException(orderId));
     }
 
     public Order validateOrderUuidAndGetOrder(String orderId) {
-        return orderOutPutPort.findByOrderId(orderId)
+        return orderOutPutPort.findByOrderUuid(orderId)
                 .orElseThrow(() -> new OrderUuidInvalidException(orderId));
     }
 

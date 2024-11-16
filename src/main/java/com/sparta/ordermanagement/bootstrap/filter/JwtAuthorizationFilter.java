@@ -17,6 +17,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.parameters.P;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -45,6 +46,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             Pattern.compile(String.format("^/api/v1/shops/%s/products/%s$", UUID_PATTERN, UUID_PATTERN)),
             Pattern.compile("^/api/v1/orders$"),
             Pattern.compile("^/api/v1/orders/payments$"),
+            Pattern.compile("^/api/v1/orders/owner$"),
             Pattern.compile(String.format("^/api/v1/orders/%s$", UUID_PATTERN)),
             Pattern.compile(String.format("^/api/v1/orders/%s/cancel$", UUID_PATTERN)),
             Pattern.compile(String.format("^/api/v1/orders/%s/reviews$", UUID_PATTERN)),

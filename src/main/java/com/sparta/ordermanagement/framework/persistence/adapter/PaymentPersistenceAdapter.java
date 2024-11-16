@@ -24,6 +24,7 @@ public class PaymentPersistenceAdapter implements PaymentOutputPort {
 
         OrderEntity orderEntity = orderRepository.findByOrderUuid(orderId).get();
         PaymentEntity paymentEntity = paymentRepository.save(PaymentEntity.from(orderEntity));
+        orderEntity.updatePayment(paymentEntity);
 
         return paymentEntity.getPaymentUuid();
     }
