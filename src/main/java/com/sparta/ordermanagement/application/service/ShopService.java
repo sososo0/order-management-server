@@ -65,4 +65,15 @@ public class ShopService {
         }
         return shop;
     }
+
+    public void validateShopBelongToUser(Shop shop, String userStringId) {
+        if (!shop.isSameOwner(userStringId)) {
+            throw new ShopOwnerMismatchException(userStringId);
+        }
+    }
+
+    public void validateShopOwner(String shopUuid, String userStringId) {
+        Shop shop = validateShopUuidAndGetNotDeletedShop(shopUuid);
+        validateShopBelongToUser(shop, userStringId);
+    }
 }

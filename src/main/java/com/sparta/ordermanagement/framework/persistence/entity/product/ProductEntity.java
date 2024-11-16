@@ -76,7 +76,7 @@ public class ProductEntity extends BaseEntity {
             productForCreate.productDescription(),
             productForCreate.productState(),
             shopEntity,
-            productForCreate.userId()
+            productForCreate.userStringId()
         );
     }
 
@@ -102,11 +102,11 @@ public class ProductEntity extends BaseEntity {
 
     public void updateProductState(ProductStateForUpdate productStateForUpdate) {
         productState = productStateForUpdate.productState();
-        super.updateFrom(productStateForUpdate.userId());
+        super.updateFrom(productStateForUpdate.userStringId());
     }
 
     public void deleteProduct(ProductForDelete productForDelete) {
-        super.deleteFrom(productForDelete.userId());
+        super.deleteFrom(productForDelete.userStringId());
     }
 
     private ProductEntity(String productUuid) {

@@ -7,6 +7,7 @@ import com.sparta.ordermanagement.application.domain.review.ReviewForDelete;
 import com.sparta.ordermanagement.application.domain.review.ReviewForUpdate;
 import com.sparta.ordermanagement.application.domain.shop.Shop;
 import com.sparta.ordermanagement.application.exception.review.ReviewDeletedException;
+import com.sparta.ordermanagement.application.exception.review.ReviewMismatchReviewerException;
 import com.sparta.ordermanagement.application.exception.review.ReviewUuidInvalidException;
 import com.sparta.ordermanagement.application.output.ReviewOutputPort;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +26,7 @@ public class ReviewService {
         Order order = orderService.validateOrderUuidAndGetNotDeletedOrder(reviewForCreate.orderUuid());
         Shop shop = shopService.validateShopUuidAndGetNotDeletedShop(order.getShopId());
 
-        // TODO: User 확인
+        orderService.validateOrderBelongToUser(order, reviewForCreate.userStringId());
 
         return reviewOutputPort.saveReview(reviewForCreate, shop.getUuid());
     }
@@ -35,9 +36,8 @@ public class ReviewService {
         Order order = orderService.validateOrderUuidAndGetNotDeletedOrder(reviewForUpdate.orderUuid());
         shopService.validateNotDeletedShopUuid(order.getShopId());
 
-        validateReviewUuidAndNotDeletedShopUuid(reviewForUpdate.reviewUuid());
-
-        // TODO: User 확인 && User가 Order에 속해있는지 확인
+        Review review = validateReviewUuidAndNotDeletedShopUuidAndGetReview(reviewForUpdate.reviewUuid());
+        validateReviewBelongToUser(review, reviewForUpdate.userStringId());
 
         return reviewOutputPort.updateReview(reviewForUpdate);
     }
@@ -46,9 +46,8 @@ public class ReviewService {
         Order order = orderService.validateOrderUuidAndGetNotDeletedOrder(reviewForDelete.orderUuid());
         shopService.validateNotDeletedShopUuid(order.getShopId());
 
-        validateReviewUuidAndNotDeletedShopUuid(reviewForDelete.reviewUuid());
-
-        // TODO: User 확인 && User가 Order에 속해있는지 확인
+        Review review = validateReviewUuidAndNotDeletedShopUuidAndGetReview(reviewForDelete.reviewUuid());
+        validateReviewBelongToUser(review, reviewForDelete.userStringId());
 
         return reviewOutputPort.deleteReview(reviewForDelete);
     }
@@ -61,6 +60,20 @@ public class ReviewService {
     private void validateReviewUuidAndNotDeletedShopUuid(String reviewUuid) {
         if(validateReviewUuidAndGet(reviewUuid).getIsDeleted()) {
             throw new ReviewDeletedException(reviewUuid);
+        }
+    }
+
+    public Review validateReviewUuidAndNotDeletedShopUuidAndGetReview(String reviewUuid) {
+        Review review = validateReviewUuidAndGet(reviewUuid);
+        if(review.getIsDeleted()) {
+            throw new ReviewDeletedException(reviewUuid);
+        }
+        return review;
+    }
+
+    public void validateReviewBelongToUser(Review review, String userStringId) {
+        if (!review.isSameReviewer(userStringId)) {
+            throw new ReviewMismatchReviewerException(userStringId);
         }
     }
 }

@@ -1,18 +1,17 @@
 package com.sparta.ordermanagement.application.domain.review;
 
 import com.sparta.ordermanagement.application.domain.shop.Shop;
+import com.sparta.ordermanagement.application.domain.user.User;
 import java.time.LocalDateTime;
 
 public class Review {
-
-    // TODO: User 추가하기
 
     private Long id;
     private String reviewUuid;
     private Integer rating;
     private String content;
     private Shop shop;
-//    private User user;
+    private User user;
     private boolean isDeleted;
     private LocalDateTime createdAt;
     private String createdBy;
@@ -25,7 +24,7 @@ public class Review {
         Integer rating,
         String content,
         Shop shop,
-//        User user,
+        User user,
         boolean isDeleted,
         LocalDateTime createdAt,
         String createdBy,
@@ -37,12 +36,16 @@ public class Review {
         this.rating = rating;
         this.content = content;
         this.shop = shop;
-//        this.user = user;
+        this.user = user;
         this.isDeleted = isDeleted;
         this.createdAt = createdAt;
         this.createdBy = createdBy;
         this.updatedAt = updatedAt;
         this.updatedBy = updatedBy;
+    }
+
+    public boolean isSameReviewer(String userStringId) {
+        return user.getUserStringId().equals(userStringId);
     }
 
     public Long getId() {
@@ -65,9 +68,9 @@ public class Review {
         return shop;
     }
 
-//    public User getUser() {
-//        return user;
-//    }
+    public User getUser() {
+        return user;
+    }
 
     public boolean getIsDeleted() {
         return isDeleted;

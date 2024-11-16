@@ -1,5 +1,6 @@
 package com.sparta.ordermanagement.application.service;
 
+import com.sparta.ordermanagement.application.domain.orderproduct.OrderProductForCreate;
 import com.sparta.ordermanagement.application.domain.product.Product;
 import com.sparta.ordermanagement.application.domain.product.ProductForCreate;
 import com.sparta.ordermanagement.application.domain.product.ProductForDelete;
@@ -12,47 +13,48 @@ import com.sparta.ordermanagement.application.output.ProductOutputPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @RequiredArgsConstructor
 @Service
 public class ProductService {
 
     private final ProductOutputPort productOutputPort;
+    private final UserService userService;
     private final ShopService shopService;
 
     public Product createProduct(ProductForCreate productForCreate) {
+
+        userService.validateOwnerRole(productForCreate.userRole());
         shopService.validateNotDeletedShopUuid(productForCreate.shopUuid());
+
         return productOutputPort.saveProduct(productForCreate);
     }
 
     public Product updateProduct(ProductForUpdate productForUpdate) {
 
-        shopService.validateNotDeletedShopUuid(productForUpdate.shopUuid());
-
-        Product product = validateProductUuidAndGetProduct(productForUpdate.productUuid());
-        validateProductBelongToShop(product, productForUpdate.shopUuid());
-        validateProductIsNotDeleted(product);
+        userService.validateOwnerRole(productForUpdate.userRole());
+        shopService.validateShopOwner(productForUpdate.shopUuid(), productForUpdate.userStringId());
+        validateNotDeletedProductAndBelongToShop(productForUpdate.productUuid(), productForUpdate.shopUuid());
 
         return productOutputPort.updateProduct(productForUpdate);
     }
 
     public Product updateProductState(ProductStateForUpdate productStateForUpdate) {
 
-        shopService.validateNotDeletedShopUuid(productStateForUpdate.shopUuid());
-
-        Product product = validateProductUuidAndGetProduct(productStateForUpdate.productUuid());
-        validateProductBelongToShop(product, productStateForUpdate.shopUuid());
-        validateProductIsNotDeleted(product);
+        userService.validateOwnerRole(productStateForUpdate.userRole());
+        shopService.validateShopOwner(productStateForUpdate.shopUuid(), productStateForUpdate.userStringId());
+        validateNotDeletedProductAndBelongToShop(productStateForUpdate.productUuid(), productStateForUpdate.shopUuid());
 
         return productOutputPort.updateProductState(productStateForUpdate);
     }
 
     public Product deleteProduct(ProductForDelete productForDelete) {
 
-        shopService.validateNotDeletedShopUuid(productForDelete.shopUuid());
-
-        Product product = validateProductUuidAndGetProduct(productForDelete.productUuid());
-        validateProductBelongToShop(product, productForDelete.shopUuid());
-        validateProductIsNotDeleted(product);
+        userService.validateOwnerRole(productForDelete.userRole());
+        shopService.validateShopOwner(productForDelete.shopUuid(), productForDelete.userStringId());
+        validateNotDeletedProductAndBelongToShop(productForDelete.productUuid(), productForDelete.shopUuid());
 
         return productOutputPort.deleteProduct(productForDelete);
     }
@@ -77,5 +79,18 @@ public class ProductService {
                 product.getProductUuid()
             );
         }
+    }
+
+    public List<Product> validateProductsAndGetProductList(List<OrderProductForCreate> productList) {
+        return productList.stream()
+                .map(orderProduct -> productOutputPort.findByProductUuid(orderProduct.productId())
+                        .orElseThrow(() -> new ProductUuidInvalidException(orderProduct.productId())))
+                .collect(Collectors.toList());
+    }
+
+    private void validateNotDeletedProductAndBelongToShop(String productUuid, String shopUuid) {
+        Product product = validateProductUuidAndGetProduct(productUuid);
+        validateProductBelongToShop(product, shopUuid);
+        validateProductIsNotDeleted(product);
     }
 }

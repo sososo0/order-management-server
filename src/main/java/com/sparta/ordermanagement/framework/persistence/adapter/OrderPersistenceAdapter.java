@@ -3,18 +3,29 @@ package com.sparta.ordermanagement.framework.persistence.adapter;
 import com.sparta.ordermanagement.application.domain.order.Order;
 import com.sparta.ordermanagement.application.domain.order.OrderForCreate;
 import com.sparta.ordermanagement.application.domain.order.OrderForUpdate;
+import com.sparta.ordermanagement.application.domain.order.TotalOrder;
 import com.sparta.ordermanagement.application.exception.order.ProductIdInvalidException;
 import com.sparta.ordermanagement.application.output.OrderOutputPort;
+import com.sparta.ordermanagement.bootstrap.rest.dto.order.OrderResponse;
 import com.sparta.ordermanagement.framework.persistence.entity.order.OrderEntity;
 import com.sparta.ordermanagement.framework.persistence.entity.orderproduct.OrderProductEntity;
 import com.sparta.ordermanagement.framework.persistence.entity.product.ProductEntity;
-import com.sparta.ordermanagement.framework.persistence.repository.OrderProductRepository;
-import com.sparta.ordermanagement.framework.persistence.repository.OrderRepository;
-import com.sparta.ordermanagement.framework.persistence.repository.ProductRepository;
+import com.sparta.ordermanagement.framework.persistence.entity.shop.ShopEntity;
+import com.sparta.ordermanagement.framework.persistence.entity.user.UserEntity;
+import com.sparta.ordermanagement.framework.persistence.repository.*;
+
 import java.util.Optional;
+
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Range;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Component
@@ -23,6 +34,8 @@ public class OrderPersistenceAdapter implements OrderOutputPort {
     private final OrderRepository orderRepository;
     private final OrderProductRepository orderProductRepository;
     private final ProductRepository productRepository;
+    private final UserRepository userRepository;
+    private final ShopRepository shopRepository;
 
     public Optional<Order> findByOrderUuid(String orderUuid) {
         return orderRepository.findByOrderUuid(orderUuid)
@@ -38,23 +51,20 @@ public class OrderPersistenceAdapter implements OrderOutputPort {
 
     @Transactional
     @Override
-    public Order saveOrder(OrderForCreate orderForCreate) {
+    public String saveOrder(OrderForCreate orderForCreate) {
 
-        OrderEntity orderEntity = orderRepository.save(OrderEntity.from(orderForCreate));
+        ShopEntity shopEntity = shopRepository.findByShopUuid(orderForCreate.shopId()).get();
+        UserEntity userEntity = userRepository.findByUserStringId(orderForCreate.userId()).get();
+        OrderEntity orderEntity = orderRepository.save(OrderEntity.from(orderForCreate, shopEntity, userEntity));
+        createOrderWithProducts(orderForCreate, orderEntity);
 
-        ProductEntity productEntity = productRepository.findByProductUuid(orderForCreate.productId())
-                .orElseThrow(() -> new ProductIdInvalidException(orderForCreate.productId()));
-
-        OrderProductEntity orderProductEntity = OrderProductEntity.from(orderForCreate, orderEntity, productEntity);
-        orderProductRepository.save(orderProductEntity);
-
-        return orderEntity.toDomain();
+        return orderEntity.getOrderUuid();
     }
 
     @Override
-    public Optional<Order> findByOrderId(String orderId) {
-        return orderRepository.findByOrderUuid(orderId)
-                .map(OrderEntity::toDomain)
+    public Optional<TotalOrder> findByOrderIdAndUserId(String orderId, String userId) {
+        return orderRepository.findByOrderUuidAndUserEntity_UserStringId(orderId, userId)
+                .map(OrderEntity::totalOrder)
                 .or(Optional::empty);
     }
 
@@ -69,10 +79,33 @@ public class OrderPersistenceAdapter implements OrderOutputPort {
 
     @Transactional
     @Override
-    public String cancelOrder(Order order) {
+    public String cancelOrder(Order order, String userId) {
         OrderEntity orderEntity = orderRepository.findByOrderUuid(order.getOrderUuid()).get();
-        orderEntity.cancelOrder();
+        orderEntity.cancelOrder(userId);
 
         return orderEntity.getOrderUuid();
+    }
+
+    private void createOrderWithProducts(OrderForCreate orderForCreate, OrderEntity orderEntity) {
+        List<OrderProductEntity> orderProductEntities = orderForCreate.productList().stream()
+                .map(orderProductForCreate -> {
+                    ProductEntity productEntity = productRepository.findByProductUuid(orderProductForCreate.productId())
+                            .orElseThrow(() -> new ProductIdInvalidException(orderProductForCreate.productId()));
+
+                    return OrderProductEntity.from(orderForCreate, orderEntity, productEntity);
+                })
+                .collect(Collectors.toList());
+
+        orderProductRepository.saveAll(orderProductEntities);
+    }
+
+    public Page<TotalOrder> findByUserId(Pageable pageable, String userId) {
+        return orderRepository.findByUserEntity_UserStringId(userId, pageable)
+                .map(OrderEntity::totalOrder);
+    }
+
+    public Page<TotalOrder> findByShopId(String shopId, Pageable pageable) {
+        return orderRepository.findByShopEntity_ShopUuid(shopId, pageable)
+                .map(OrderEntity::totalOrder);
     }
 }

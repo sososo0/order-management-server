@@ -2,12 +2,17 @@ package com.sparta.ordermanagement.bootstrap.rest.controller;
 
 import com.sparta.ordermanagement.application.domain.order.OrderForCreate;
 import com.sparta.ordermanagement.application.domain.order.OrderForUpdate;
+import com.sparta.ordermanagement.application.domain.order.OrderPayment;
 import com.sparta.ordermanagement.application.service.OrderService;
+import com.sparta.ordermanagement.bootstrap.auth.UserDetailsImpl;
 import com.sparta.ordermanagement.bootstrap.rest.dto.order.OrderCreateRequest;
+import com.sparta.ordermanagement.bootstrap.rest.dto.order.OrderDetailResponse;
 import com.sparta.ordermanagement.bootstrap.rest.dto.order.OrderUpdateRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -16,34 +21,35 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/orders")
 public class OrderCommandController {
 
-    // 삭제 예정: 추후 토큰으로부터 사용자 식별자를 받아와 대체할 것
-    private static final String TEST_CREATED_USER_ID = "0000";
-
     private final OrderService orderService;
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public String createOrder(@RequestBody OrderCreateRequest orderCreateRequest) {
+    public OrderDetailResponse createOrder(@RequestBody OrderCreateRequest orderCreateRequest,
+                                           @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        /* 반환 타입 수정*/
+        OrderForCreate orderForCreate = orderCreateRequest.toDomain(userDetails.getUserStringId());
+        OrderPayment orderPayment =  orderService.createOrder(orderForCreate);
 
-        OrderForCreate orderForCreate = orderCreateRequest.toDomain(TEST_CREATED_USER_ID);
-        return orderService.createOrder(orderForCreate);
+        return OrderDetailResponse.from(orderPayment);
     }
 
-    // 주문 상태 변경 시 권한 검증은 Spring Security 기능 활성화 후 @PreAuthorize 등을 사용해 추가 예정
+    @PreAuthorize("!hasRole('CUSTOMER')")
     @ResponseStatus(HttpStatus.OK)
     @PatchMapping("/{orderUuid}")
-    public String updateOrderState(@PathVariable(value ="orderUuid") String orderId, @RequestBody OrderUpdateRequest orderUpdateRequest) {
+    public String updateOrderState(@PathVariable(value ="orderUuid") String orderId,
+                                   @RequestBody OrderUpdateRequest orderUpdateRequest,
+                                   @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
-        OrderForUpdate orderForUpdate = orderUpdateRequest.toDomain(orderId, TEST_CREATED_USER_ID);
+        OrderForUpdate orderForUpdate = orderUpdateRequest.toDomain(orderId, userDetails.getUserStringId());
         return orderService.updateOrderState(orderForUpdate);
     }
 
-    // 주문 취소자의 정보는 JWT 통합 후 @AuthenticationPrincipal 등을 사용해 확인할 예정
-    // Owner 이상의 권한을 가진 유저의 경우 주문 상태 변경 메서드에서도 Cancel로 바꿀 수 있도록 설정?
     @ResponseStatus(HttpStatus.OK)
-    @PatchMapping("{order_id}/cancel")
-    public String cancelOrder(@PathVariable("order_id") String orderId) {
+    @PatchMapping("{orderId}/cancel")
+    public String cancelOrder(@PathVariable("orderId") String orderId,
+                              @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
-        return orderService.cancelOrder(orderId);
+        return orderService.cancelOrder(orderId, userDetails.getUserStringId());
     }
 }
