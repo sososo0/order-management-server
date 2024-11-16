@@ -24,6 +24,9 @@ public class AdminUserService {
     @Transactional
     public String signup(User user) {
 
+        log.info("[AdminUserService]-[signup] Admin 회원가입 요청");
+
+        //password 인코딩
         String encodedPassword = passwordEncoder.encode(user.getPassword());
 
         //회원 중복 확인
@@ -31,36 +34,36 @@ public class AdminUserService {
             throw new InvalidValueException("동일한 Id를 가진 유저가 이미 존재합니다.");
         }
 
-        //회원 권한 확인
-        if(!(user.getRole().equals(Role.MANAGER)|| user.getRole().equals(Role.MASTER))){
-            throw new InvalidValueException("일반 계정 등록은 다른 API 를 사용해야 합니다.");
-
-        }
-
         return userOutputPort.saveUser(user, encodedPassword);
-
     }
 
     @Transactional(readOnly = true)
     public List<User> getUsers() {
-
+        log.info("[AdminUserService]-[getUsers]");
         return userOutputPort.findAll();
     }
 
     @Transactional
-    public Integer updateUser(String userStringId, Role role) {
+    public void updateUser(String userStringId, Role role) {
 
-        return userOutputPort.updateUserById(userStringId, role);
+        log.info("[AdminUserService]-[updateUser]");
+
+        Integer countOfUpdatedUser = userOutputPort.updateUserById(userStringId, role);
+
+        if(countOfUpdatedUser == 0){
+            throw new InvalidValueException("존재하지 않는 유저입니다.");
+        }
     }
 
     @Transactional
     public void deleteUser(String userStringId) {
 
+        log.info("[AdminUserService]-[deleteUser]");
+
         int deletedUserCount = userOutputPort.deleteUserByUserStringId(userStringId);
 
-        if(deletedUserCount != 1){
-            throw new InvalidValueException("User does not exist");
+        if(deletedUserCount == 0){
+            throw new InvalidValueException("존재하지 않는 유저입니다.");
         }
-
     }
 }

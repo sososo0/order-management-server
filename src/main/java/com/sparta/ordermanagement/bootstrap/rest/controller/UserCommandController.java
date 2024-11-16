@@ -1,10 +1,10 @@
 package com.sparta.ordermanagement.bootstrap.rest.controller;
 
-import com.sparta.ordermanagement.application.exception.InvalidValueException;
 import com.sparta.ordermanagement.application.service.UserService;
 import com.sparta.ordermanagement.bootstrap.rest.dto.user.UserSigninRequest;
 import com.sparta.ordermanagement.bootstrap.rest.dto.user.UserSignupRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import com.sparta.ordermanagement.bootstrap.rest.exception.exceptions.RequestValidationException;
+import com.sparta.ordermanagement.framework.persistence.entity.user.Role;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +14,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @Slf4j
 @RequiredArgsConstructor
 @RestController
@@ -22,56 +24,49 @@ public class UserCommandController {
 
     private final UserService userService;
 
-    @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping("/signup")
-    public String signupUser(@RequestBody @Valid UserSignupRequest userSignupRequest, BindingResult bindingResult) {
-
-        log.info("[UserCommandController] /signup API call");
-
-        // 유효성 검사 실패 시 오류 처리
+    private static void requestValidation(BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-
-            StringBuilder errorMessages = new StringBuilder();
-            bindingResult.getAllErrors().forEach(error -> {
-                errorMessages.append(error.getDefaultMessage()).append("\n");
-            });
-
-            log.error("[UserCommandController] /signup error: {}", errorMessages.toString());
-
-            throw new InvalidValueException(errorMessages.toString());
+            String bindingErrorMessage = bindingResult.getAllErrors().toString();
+            throw new RequestValidationException(bindingErrorMessage);
         }
-
-        return userService.signup(userSignupRequest.toDomain());
     }
 
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping("/signup")
+    public Map.Entry signupUser(@RequestBody @Valid UserSignupRequest userSignupRequest, BindingResult bindingResult) {
 
-    @PostMapping("/signin")
-    public ResponseEntity<String> signinUser(@RequestBody UserSigninRequest userSigninRequest, BindingResult bindingResult){
+        log.info("[UserCommandController]-[signupUser] API call");
 
-        log.info("[UserCommandController] /signin API call");
-
-        // 유효성 검사 실패 시 오류 처리
-        if (bindingResult.hasErrors()) {
-
-            StringBuilder errorMessages = new StringBuilder();
-            bindingResult.getAllErrors().forEach(error -> {
-                errorMessages.append(error.getDefaultMessage()).append("\n");
-            });
-
-            log.error("[UserCommandController] /signin error: {}", errorMessages.toString());
-
-            throw new InvalidValueException(errorMessages.toString());
+        //Validation
+        requestValidation(bindingResult);
+        if(userSignupRequest.getRole().equals(Role.MANAGER)|| userSignupRequest.getRole().equals(Role.MASTER)){
+            throw new RequestValidationException("관리자 계정은 등록할 수 없습니다.");
         }
 
-        String token = userService.signin(userSigninRequest.toDomain());
+        String signupUserStringId = userService.signup(userSignupRequest.toDomain());
 
-        // 응답에 토큰 설정
+        return Map.entry("userStringId", signupUserStringId);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @PostMapping("/signin")
+    public ResponseEntity<String> signinUser(@RequestBody @Valid UserSigninRequest userSigninRequest, BindingResult bindingResult){
+
+        log.info("[UserCommandController]-[signinUser] API call");
+
+        //Validation
+        requestValidation(bindingResult);
+
+        String accessToken = userService.signin(userSigninRequest.toDomain());
+
+        // 응답 헤더에 토큰 설정
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", token);
+        headers.set("Authorization", accessToken);
 
-        return ResponseEntity.ok()
+        return ResponseEntity
+                .ok()
                 .headers(headers)
-                .body("signin successful");
+                .body("user signin successfully");
     }
 
 }
