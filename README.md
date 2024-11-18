@@ -55,4 +55,5 @@ https://github.com/IDLE-Sparta/order-management-server/wiki
 ![image](https://github.com/user-attachments/assets/991ea981-7a82-4507-9150-d9205e518054)
 
 ### 🛠 프로젝트 아키텍처
-![image](https://github.com/user-attachments/assets/f1536167-e562-4899-9858-6dd5b39319f1)
+![image](https://github.com/user-attachments/assets/8423d64b-55ca-46f6-b43d-0cc78063fb6f)
+
