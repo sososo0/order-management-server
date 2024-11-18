@@ -61,7 +61,7 @@ https://github.com/IDLE-Sparta/order-management-server/wiki
 
 1. git clone 
     ```
-   git clone https://github.com/sososo0/shopping-app.git
+   git clone https://github.com/IDLE-Sparta/order-management-server.git
    ```
 
 2. docker 설치 
