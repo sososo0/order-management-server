@@ -57,7 +57,7 @@ https://github.com/IDLE-Sparta/order-management-server/wiki
 ### 🛠 프로젝트 아키텍처
 ![image](https://github.com/user-attachments/assets/f1536167-e562-4899-9858-6dd5b39319f1)
 
-### How To Start
+### 🔍 How To Start
 
 1. git clone 
     ```
@@ -90,7 +90,9 @@ https://github.com/IDLE-Sparta/order-management-server/wiki
     > 
     > 변경사항을 저장하기 위해 docker 로그아웃 후 다시 로그인
 
-4. .env, schema.sql, swagger.yml 파일 만들기 
+<br>
+
+4. .env, schema.sql, swagger.yml 파일 만들기
 
 - 보안과 유지보수를 용이하게 하기 위해 .env 파일을 생성했습니다. 
 - database에 테이블을 생성하기 위한 schema.sql을 생성합니다. 
@@ -104,20 +106,19 @@ https://github.com/IDLE-Sparta/order-management-server/wiki
     ├── swagger.yml
     ```
 
-```
-DB_NAME=    # DB 명 
-DB_USER=    # 사용자 명 
-DB_PW=      # 비밀번호
-JWT_KEY=    # JWT Key
-AI_KEY=     # AI Key
-```
-
+    ```
+    DB_NAME=    # DB 명 
+    DB_USER=    # 사용자 명 
+    DB_PW=      # 비밀번호
+    JWT_KEY=    # JWT Key
+    AI_KEY=     # AI Key
+    ```
 - template은 위와 같습니다. 
 
-5. docker-compose를 실행합니다.
+<br>
 
+5. docker-compose를 실행합니다.
     ```
     docker-compose up -d --build
     ```
-
-- Dockerfile이 빌드되고 SpringBoot Web Application과 PostgreSQL의 docker container가 생성되고 실행됩니다.
+    - Dockerfile이 빌드되고 SpringBoot Web Application과 PostgreSQL의 docker container가 생성되고 실행됩니다.
