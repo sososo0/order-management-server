@@ -21,9 +21,11 @@
 
 ### 📂 API Document
 프로젝트의 API 명세는 아래 링크에서 확인하실 수 있습니다.
+https://www.notion.so/teamsparta/API-3bc9469612954c23a09eaad935f7a4ab
 
 ### 📄 서비스 구성 및 실행방법
-프로젝트의 API 명세는 아래 링크에서 확인하실 수 있습니다.
+프로젝트의 서비스 구성 및 실행밥법은 아래 링크에서 확인하실 수 있습니다.
+https://github.com/IDLE-Sparta/order-management-server/wiki
 
 ---
 
@@ -54,7 +56,3 @@
 
 ### 🛠 프로젝트 아키텍처
 ![image](https://github.com/user-attachments/assets/f1536167-e562-4899-9858-6dd5b39319f1)
-
-### 🛠 애플리케이션 아키텍처
-![image](https://github.com/user-attachments/assets/f6f8f191-2b81-41fd-86b9-5cfb22a013da)
-![image](https://github.com/user-attachments/assets/a2fdffc8-1cea-42fc-a2de-b6431f89f519)
